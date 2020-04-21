@@ -50,3 +50,17 @@ export const modificaIDEscolhido = (texto) => {
         dadoParaOReducer: texto
     }
 }
+
+export const modificaLatitude = (texto) => {
+    return {
+        type: 'modifica_Latitude',
+        dadoParaOReducer: texto
+    }
+}
+
+export const modificaLongitude = (texto) => {
+    return {
+        type: 'modifica_Longitude',
+        dadoParaOReducer: texto
+    }
+}

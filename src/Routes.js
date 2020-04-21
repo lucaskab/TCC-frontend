@@ -13,14 +13,15 @@ import Perfil from './components/Perfil';
 import Buscas from './components/Buscas';
 import Foto from './components/Foto';
 import CompleteProblem from './components/CompleteProblem';
+import ProblemRemoteLocation from './components/ProblemRemoteLocation';
 
 
 export default props => (
     <>
     <Router showNavigationBar={false}>
         <Stack key="root">
-        
         <Scene key='formLogin' component={FormLogin} hideNavBar/>
+        <Scene key='problemRemoteLocation' component={ProblemRemoteLocation} hideNavBar/>
         <Scene key='perfil' component={Perfil} hideNavBar/>
         <Scene key='fotos' component={Foto} hideNavBar/>
         <Scene key='busca' component={Buscas} />

@@ -7,6 +7,8 @@ const INITIAL_STATE = {
     Descricao: '',
     Sugestao: '',
     IDEscolhido: '',
+    Latitude: '',
+    Longitude: '',
 
 }
 
@@ -45,6 +47,15 @@ export default (state = INITIAL_STATE, action) => {
     else if(action.type == 'modifica_IDEscolhido'){
        
         return {  ...state, IDEscolhido:action.dadoParaOReducer}
+    }
+
+    else if(action.type == 'modifica_Latitude'){
+        return {  ...state, Latitude:action.dadoParaOReducer}
+    }
+
+    else if(action.type == 'modifica_Longitude'){
+       
+        return {  ...state, Longitude:action.dadoParaOReducer}
     }
      return state;
 }

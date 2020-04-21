@@ -28,12 +28,16 @@ const IndicatorStyles = {
 
     export const EnviarProblema = (props) =>  {
     const [dataLoaded, setDataLoaded] = useState(false);
+    const [remoteLocation, setRemoteLocation] = useState(false);
     const [escolha, setEscolha] = useState("Saude");
     const [nomeProblema, setNomeProblema] = useState("Hospital Lotado");
     const [currentRegion, setCurrentRegion] = useState(null);
     const [bolinhas, setBolinhas] = useState(0);
    
     async function cadastrarProblems(email, nomeProblema, Descricao, areaProblema, latitude, longitude, sugestao){
+      console.log(latitude);
+      console.log(longitude);
+      
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
       const urlFoto =  [];
       for(var i = 0; i <5; i++){
@@ -62,11 +66,17 @@ const IndicatorStyles = {
     
     }
 
+    function RemoteLocation(){
+      setRemoteLocation(true);
+      Actions.problemRemoteLocation();
+    }
+
 
     useEffect(() => {
 
       
       async function loadInitialPosition(){
+        setRemoteLocation(false);
 
         const retorno = await Font.loadAsync({
           'adventpro-regular': require('../../assets/fonts/adventpro-regular.ttf'),
@@ -260,9 +270,23 @@ function SwipeEsquerda(){
       />
       </View>
 
-      <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
-        <Text >Enviar Problema</Text>
+      <Button  onPress={() => RemoteLocation()} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+        <Text >Selecionar uma localização</Text>
       </Button>
+
+      <Button  onPress={() => loadInitialPosition()} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+        <Text >Localização atual</Text>
+      </Button>
+        {remoteLocation ? 
+          <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, props.latitude, props.longitude, props.sugestao)} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+          <Text >Enviar Problema</Text>
+        </Button> :
+
+        <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+        <Text >Enviar Problema</Text>
+        </Button>
+      }
+      
   </ScrollView>
   </>
   );
@@ -277,7 +301,9 @@ const mapStateToProps = state =>(
     Foto5: state.ProblemaReducer.Foto5,
     email: state.AutenticacaoReducer.emailLogin,
     Descricao: state.ProblemaReducer.Descricao,
-    sugestao: state.ProblemaReducer.Sugestao
+    sugestao: state.ProblemaReducer.Sugestao,
+    latitude: state.ProblemaReducer.Latitude,
+    longitude: state.ProblemaReducer.Longitude,
   }
   
 )
