@@ -35,8 +35,6 @@ const IndicatorStyles = {
     const [bolinhas, setBolinhas] = useState(0);
    
     async function cadastrarProblems(email, nomeProblema, Descricao, areaProblema, latitude, longitude, sugestao){
-      console.log(latitude);
-      console.log(longitude);
       
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
       const urlFoto =  [];

@@ -20,7 +20,7 @@ const formLogin = props=>{
       alert("Usuário não encontrado");
     }
     else {
-      Actions.navigation();
+      Actions.tab();
     }
   }
 

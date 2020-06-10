@@ -62,9 +62,6 @@ function ProblemRemoteLocation(props) {
      modificaLongitude(local1[0].longitude);
      } }
    
-
-  
-
   useEffect(() => {
 
     async function loadInitialPosition(){

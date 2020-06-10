@@ -1,10 +1,10 @@
 {
   "webpackServerPort": null,
-  "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 12397,
-  "expoServerNgrokUrl": "https://yw-zxi.anonymous.frontend.exp.direct",
-  "packagerNgrokUrl": "https://packager.yw-zxi.anonymous.frontend.exp.direct",
-  "ngrokPid": 12465
+  "devToolsPort": 19003,
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }

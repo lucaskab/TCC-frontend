@@ -172,7 +172,7 @@ function HomeScreen({ navigation }, props) {
       :
       <MapView   initialRegion={currentRegion} style={styles.map} region={currentRegion} >
       {local.map(location => (
-        <MapView.Marker  draggable={true} onDragEnd={(e) => setCurrentRegion(e.nativeEvent.coordinate)}  coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude }} />
+        <MapView.Marker  draggable={true} onDragEnd={(location) => setCurrentRegion(location.nativeEvent.coordinate)}  coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude }} />
       ))}
       {Problems.map(problem => (
         <MapView.Marker key={problem._id} coordinate={{ latitude: problem.posicao.coordinates[1] , longitude: problem.posicao.coordinates[0], title:"title", description:"description" }} >

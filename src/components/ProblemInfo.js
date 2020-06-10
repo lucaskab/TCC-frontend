@@ -1,76 +1,55 @@
 import React, {useState, useEffect} from 'react';
 import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
 import api from '../../services/api';
-import { connect } from 'react-redux';
-import Constants from 'expo-constants'
+import Constants from 'expo-constants';
+import parseISO from 'date-fns/parseISO';
+import pt from 'date-fns/locale/pt';
+import {format, subMonths} from 'date-fns';
 
-export const CompleteProblem = (props) => {
-  const [problems, setProblems] = useState([]);
+export const ProblemInfo = (props) => {
+  const [problem, setProblem] = useState({});
+  const [statusProblem, setStatusProblem] = useState('');
+  const [date, setDate] = useState('');
 
   async function loadProblem(){
-    const id = props._id
+    const id = props.data
+    console.log(id);
     const response = await api.get('/searchProblemByID',{
         params: {
             _id: id
         }
     })
     console.log(response.data);
-    setProblems([response.data])
+    setProblem(response.data)
+    setStatusProblem(response.data.status);
+    const parsedDate = parseISO(response.data.CreatedAt);
+    console.log(parsedDate);
+    const formattedDate = format(parsedDate, "dd'/'MMMM'/'yyyy 'hora:' kk ':' mm ':' ss", {locale: pt} );
+    console.log(formattedDate);
+    setDate(formattedDate);
+    
 }
-
 useEffect(() => {
   loadProblem();
 }, []);
 
     return (
-    <View style={styles.container}>
-      <FlatList 
-      data={problems}
-      style={styles.problemList}
-      keyExtractor={problem => String(problem._id)}
-      showsVerticalScrollIndicator={false}
-      renderItem={({ item: problem }) => (
-          <View style={styles.problem}>
-          <View style={styles.detailsButton}>
-          <Text style={styles.problemProperty}>Nome: </Text>
-          {/*<TouchableOpacity onPress={() => onPressSimpleAlert(problem._id)}>
-              <CheckAlert
-              ref={ref => (this.checkAlert = ref)}
-              // available Modal's props options: https://facebook.github.io/react-native/docs/modal.html
-              modalProps={{
-                  transparent: true,
-                  animationType: "slide",
-              }}
-              checkBoxColor="red"
-              />
-              <Feather name="trash-2" size={20} color="#8a2be2" />
-            </TouchableOpacity>*/}
-          </View>
-          <Text style={styles.problemValue}>{problem.nomeProblema}</Text>
-
-          <Text style={styles.problemProperty}>Area:</Text>
-          <Text style={styles.problemValue}>{problem.areaProblema}</Text>
-
-          <Text style={styles.problemProperty}>Descrição:</Text>
-          <Text style={styles.problemValue}>{problem.descricaoProblema}</Text>
-
-
+      <View style={styles.container}>
+      <View>
+          <Text>{problem.areaProblema}</Text>
+          <Text>{problem.nomeProblema}</Text>
+          <Text>{problem.descricaoProblema}</Text>
+          <Text>{problem.sugestao}</Text>
+          <Text>{problem.status}</Text>
+          <Text>{problem.email}</Text>
+          <Text>{date}</Text>
       </View>
-      
-      )}
-  />
-  </View>
+</View>
     );
 }
 
-const mapStateToProps = state =>(
-  {
-    id: state.ProblemaReducer.IDEscolhido,
-  }
-  
-)
 
-export default connect(mapStateToProps)(CompleteProblem);
+export default ProblemInfo;
 
 const styles = StyleSheet.create({
   container: {

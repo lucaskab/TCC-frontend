@@ -3,7 +3,6 @@ import { Router, Scene, Stack } from 'react-native-router-flux';
 
 import FormLogin from './components/FormLogin';
 import FormCadastro from './components/FormCadastro';
-import FormPrincipal from './components/FormPrincipal';
 import Navigation from './components/Navigation';
 import FormCadastroProblema from './components/FormCadastroProblema';
 import EnviarProblema from './components/EnviarProblema';
@@ -13,14 +12,19 @@ import Perfil from './components/Perfil';
 import Buscas from './components/Buscas';
 import Foto from './components/Foto';
 import CompleteProblem from './components/CompleteProblem';
+import ProblemInfo from './components/ProblemInfo';
 import ProblemRemoteLocation from './components/ProblemRemoteLocation';
+import Tab from './components/MyTabs';
 
 
 export default props => (
     <>
     <Router showNavigationBar={false}>
         <Stack key="root">
+        <Scene key='tab' component={Tab} hideNavBar />
         <Scene key='formLogin' component={FormLogin} hideNavBar/>
+        
+        
         <Scene key='problemRemoteLocation' component={ProblemRemoteLocation} hideNavBar/>
         <Scene key='perfil' component={Perfil} hideNavBar/>
         <Scene key='fotos' component={Foto} hideNavBar/>
@@ -31,8 +35,8 @@ export default props => (
         <Scene key='formCadastroProblema' component={FormCadastroProblema} hideNavBar />
         <Scene key='navigation' component={Navigation} hideNavBar /> 
         <Scene key='formCadastro' component={FormCadastro} hideNavBar/>
-        <Scene key='formPrincipal' component={FormPrincipal} hideNavBar />
-        <Scene key='completeProblem' component={CompleteProblem} hideNavBar />
+        <Stack key='completeProblem' component={CompleteProblem} hideNavBar />
+        <Stack key='problemInfo' component={ProblemInfo} hideNavBar />
 
         </Stack>
     </Router>  
