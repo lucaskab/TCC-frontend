@@ -1,14 +1,15 @@
 import React, { Component ,useState, useEffect} from "react";
-import { StyleSheet, Image, ScrollView, Picker, TextInput,Alert } from "react-native";
+import { StyleSheet, Image, ScrollView, Picker, TextInput,Alert, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { Actions} from 'react-native-router-flux'
-import { Container, Header, View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Button, Input, Icon } from 'native-base';
+import {  View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Button, Input, Icon } from 'native-base';
 import { connect } from 'react-redux';
-import { getCurrentPositionAsync } from 'expo-location';
+import { getCurrentPositionAsync, geocodeAsync } from 'expo-location';
 import { modificaDescricao,modificaSugestao} from '../actions/ProblemaActions'
 import api from '../../services/api';
-import * as Font from 'expo-font';
 import StepIndicator from 'react-native-step-indicator';
 import { Appbar } from 'react-native-paper';
+import MapView from 'react-native-maps';
+import { MaterialIcons} from '@expo/vector-icons';
 
 const IndicatorStyles = {
   stepIndicatorSize: 15,
@@ -29,13 +30,54 @@ const IndicatorStyles = {
     export const EnviarProblema = (props) =>  {
     const [dataLoaded, setDataLoaded] = useState(false);
     const [remoteLocation, setRemoteLocation] = useState(false);
-    const [escolha, setEscolha] = useState("Saude");
+    const [escolha, setEscolha] = useState("Saúde");
     const [nomeProblema, setNomeProblema] = useState("Hospital Lotado");
     const [currentRegion, setCurrentRegion] = useState(null);
     const [bolinhas, setBolinhas] = useState(0);
+    const [local, setLocal] = useState([]);
+    const [busca,setBusca] = useState('');
+
+    const DismissKeyboard = ({ children }) => (
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+      </TouchableWithoutFeedback>
+    );
+    
+    async function LoadAddress(){
+
+
+      const local1 = await geocodeAsync(busca);
+   
+     if(local1[0] === undefined || local1 === []){
+       const { coords } = await getCurrentPositionAsync({
+         enableHighAccuracy: true,
+       });
+       const {latitude, longitude} = coords
+       setCurrentRegion({
+         latitude,
+         longitude,
+         latitudeDelta: 0.04,
+         longitudeDelta: 0.04
+       })
+  
+     }
+     else{
+     const result = {
+       latitude: local1[0].latitude,
+       longitude: local1[0].longitude,
+       latitudeDelta: 0.02,
+       longitudeDelta: 0.02,
+     }
+      setLocal([result])
+      setCurrentRegion({
+        latitude: local1[0].latitude,
+        longitude: local1[0].longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      })
+       } }
    
     async function cadastrarProblems(email, nomeProblema, Descricao, areaProblema, latitude, longitude, sugestao){
-      
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
       const urlFoto =  [];
       for(var i = 0; i <5; i++){
@@ -56,46 +98,46 @@ const IndicatorStyles = {
 
       urlFoto[i] = result.data.url;
     }
-    
+      if(remoteLocation === true) {
+      await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema,latitude,longitude, sugestao})
+      Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
+      Actions.reset('navigation');
+      }
 
       await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema, latitude, longitude, sugestao})
       Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
-      Actions.navigation();
+      Actions.reset('navigation');
     
     }
 
     function RemoteLocation(){
       setRemoteLocation(true);
-      Actions.problemRemoteLocation();
     }
+    function MomentLocation(){
+      setRemoteLocation(false);
+      loadInitialPosition();
+    }
+    async function loadInitialPosition(){
+      setRemoteLocation(false);
+     
+        const { coords } = await getCurrentPositionAsync({
+          enableHighAccuracy: true,
+        });
 
+        const { latitude, longitude } = coords;
+
+        setCurrentRegion({
+          latitude,
+          longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        })
+      }  
 
     useEffect(() => {
 
       
-      async function loadInitialPosition(){
-        setRemoteLocation(false);
 
-        const retorno = await Font.loadAsync({
-          'adventpro-regular': require('../../assets/fonts/adventpro-regular.ttf'),
-          'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf'),
-          'Roboto_medium': require('../../assets/fonts/Roboto-Medium.ttf')
-  
-          })
-       
-          const { coords } = await getCurrentPositionAsync({
-            enableHighAccuracy: true,
-          });
-  
-          const { latitude, longitude } = coords;
-  
-          setCurrentRegion({
-            latitude,
-            longitude,
-            latitudeDelta: 0.04,
-            longitudeDelta: 0.04,
-          })
-        }  
       
   
       loadInitialPosition();
@@ -135,44 +177,45 @@ const IndicatorStyles = {
     ];
 
 function NomeProblema(){
-    if(escolha == "Saude"){
+    if(escolha === "Saúde"){
         return(
             <Picker
             style={{ backgroundColor: "#DCDCDC", width: 210, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
-          >
-            <Picker.Item label="Hospital Lotado" value= "Hospital Lotado" />
-      <Picker.Item label="Foco de Dengue" value="Foco de Dengue" />
+            >
+              <Picker.Item label="Hospital Lotado" value= "Hospital Lotado" />
+              <Picker.Item label="Foco de Dengue" value="Foco de Dengue" />
           </Picker>
         )
     }
-    if(escolha == "Transito"){
+    if(escolha === "Trânsito"){
         return(
             <Picker
             style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
-          >
-            <Picker.Item label="Semáforo Quebrado" value= "Semáforo Quebrado" />
-        <Picker.Item label="Acidente" value="Acidente" />
+            >
+              <Picker.Item label="Semáforo Quebrado" value= "Semáforo Quebrado" />
+              <Picker.Item label="Acidente" value="Acidente" />
           </Picker>
         )
     }
-    if(escolha == "Ambiental"){
+    if(escolha === "Ambiental"){
       return(
           <Picker
           style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
           selectedValue={nomeProblema}
           onValueChange={value => setNomeProblema(value)}
-        >
-          <Picker.Item label="Poluição" value= "Poluição" />
-      <Picker.Item label="Alagamento" value="Alagamento" />
+          >
+            <Picker.Item label="Poluição" value= "Poluição" />
+            <Picker.Item label="Alagamento" value="Alagamento" />
         </Picker>
       )
   }
   
   }
+
 function SwipeDireita(){
   if(bolinhas == 4){
     setBolinhas(0)
@@ -208,8 +251,8 @@ function SwipeEsquerda(){
             }
         >
       
-                <Picker.Item label="Saude" value= "Saúde" />
-                <Picker.Item label="Transito" value="Trânsito" />
+                <Picker.Item label="Saúde" value= "Saúde" />
+                <Picker.Item label="Trânsito" value="Trânsito" />
                 <Picker.Item label="Ambiental" value="Ambiental" />         
         </Picker>
     </View> 
@@ -268,22 +311,59 @@ function SwipeEsquerda(){
       />
       </View>
 
-      <Button  onPress={() => RemoteLocation()} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+      <Button  onPress={() => RemoteLocation()} style={{ marginTop:375, marginBottom: 10, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
         <Text >Selecionar uma localização</Text>
       </Button>
 
-      <Button  onPress={() => loadInitialPosition()} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+      <Button  onPress={MomentLocation} style={{ marginTop:10, marginBottom: 10, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
         <Text >Localização atual</Text>
       </Button>
-        {remoteLocation ? 
-          <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, props.latitude, props.longitude, props.sugestao)} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
-          <Text >Enviar Problema</Text>
-        </Button> :
 
-        <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:385, marginBottom: 35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+      {remoteLocation && (
+        <>
+              <DismissKeyboard>
+              {currentRegion ?
+              
+              <MapView   initialRegion={currentRegion} style={styles.map} region={currentRegion} >
+              {local.map(location => (
+                <MapView.Marker  draggable={true} onDragEnd={(e) => {setCurrentRegion({latitude:e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude})}} coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude }} />
+              ))}
+           
+              </MapView>
+              : null
+            }
+              
+              
+              </DismissKeyboard>
+              <View style={styles.addForm} >
+                <TouchableOpacity  onPress={() => Actions.enviarProblema({local: currentRegion, set: true})} style={styles.addButton}>
+                  <Text style={{fontSize:16,fontWeight: 'bold',color: '#FFF'}}>Selecionar</Text>
+                </TouchableOpacity>
+              </View> 
+              
+              
+               <KeyboardAvoidingView style={styles.searchForm} behavior="padding" keyboardVerticalOffset= '20'>
+                <TextInput 
+                style={styles.searchInput} 
+                placeholder="Pesquisar uma localização..."
+                placeholderTextColor="#999"
+                autoCapitalize="words"
+                autoCorrect={false}
+                value={busca}
+                onChangeText={texto => setBusca(texto)}
+                />
+                <TouchableOpacity  onPress={() => {LoadAddress()}} style={styles.loadButton}>
+                  <MaterialIcons name="my-location" size={20} color="#FFF" />
+                </TouchableOpacity>
+        
+              </KeyboardAvoidingView>
+              </>
+      )}
+
+
+        <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:10, marginBottom:35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
         <Text >Enviar Problema</Text>
         </Button>
-      }
       
   </ScrollView>
   </>
@@ -341,5 +421,78 @@ const styles = StyleSheet.create({
     width: 300,
     justifyContent: "flex-start",
     textAlignVertical: 'top',
-  }
+  },
+  map: {
+    width: 400,
+    height: 800
+  },
+  avatar: {
+    width: 54,
+    height: 54,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: '#FFF'
+  },
+  callout: {
+    width: 200,
+    height: 100
+  },
+  user:{
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  problem: {
+    color: '#666',
+    marginTop: 5
+  },
+  data: {
+    marginTop: 5
+  },
+  searchForm: {
+    top: 10,
+    left: 20,
+    right: 20,
+    zIndex: 5,
+    flexDirection: 'row',
+    justifyContent:'space-between'
+  },
+  searchInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: '#FFF',
+    color: '#333',
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 4,
+      height: 4,
+    },
+    elevation: 2,
+  },
+  loadButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#8E4Dff',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+  },
+  addButton: {
+    width: 225,
+    height: 60,
+    backgroundColor: '#8E4Dff',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+  },
+  addForm: {
+    alignSelf: 'center',
+    bottom: 20,
+    zIndex: 5,
+  },
 });

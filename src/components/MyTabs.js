@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ServiceProviderMain from './ServiceProviderMain';
 import ServiceProviderData from './ServiceProviderData';
+import ServiceProviderCharts from './ServiceProviderCharts';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
@@ -18,10 +19,10 @@ const MyTabs = () => {
 
             if (route.name === 'Problemas') {
               iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
+                ? 'ios-list-box' 
+                : 'ios-list';
             } else if (route.name === 'Atuais') {
-              iconName = focused ? 'ios-list-box' : 'ios-list';
+              iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
             }
 
             // You can return any component that you like here!
@@ -29,12 +30,13 @@ const MyTabs = () => {
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'tomato',
+          activeTintColor: '#8a2be2',
           inactiveTintColor: 'gray',
         }}
       >
         <Tab.Screen name="Problemas" component={ServiceProviderMain} />
         <Tab.Screen name="Atuais" component={ServiceProviderData} />
+        <Tab.Screen name="Gráficos" component={ServiceProviderCharts} />
       </Tab.Navigator>
     </NavigationContainer>
   );

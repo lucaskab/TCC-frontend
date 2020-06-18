@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import { View, Text, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { requestPermissionsAsync, getCurrentPositionAsync, geocodeAsync } from 'expo-location';
 import api from '../../services/api';
 import { Appbar } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Actions} from 'react-native-router-flux'
+import { Actions} from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import Icon from '@expo/vector-icons/Feather';
 
-const ServiceProviderMain = () => {
+const ServiceProviderMain = (props) => {
   const [problems, setProblems] = useState([]);
-  const [position, setPosition] = useState([-21.0000,-50.0000]);
+  const [position, setPosition] = useState([0,0]);
+  const [user, setUser] = useState({});
   
   function handleCircleColor(status) {
     if(status === "Avaliando") {
@@ -40,6 +43,12 @@ const ServiceProviderMain = () => {
     }
   }
 
+  useEffect(() => {
+    const email = props.email;
+    api.post('userscadastrados', {email}).then(response => {
+      setUser(response.data)
+    })} , []);
+
 
   useEffect(() => {
 
@@ -65,9 +74,10 @@ const ServiceProviderMain = () => {
      }, []);
 
   useEffect(() => {
+    console.log(user.area)
     api.get('/SearchFormBuscas', {
       params: {
-        areaProblema: 'Saude',
+        areaProblema: user.area,
         nomeProblema: '',
         latitude: position.latitude,
         longitude: position.longitude,
@@ -75,7 +85,15 @@ const ServiceProviderMain = () => {
       }
     }).then(response => {
       setProblems(response.data)
-    })},[position]);
+      
+    })
+    console.log(problems)
+  },[position]);
+
+  const handleAssignService = useCallback(async (userId,problemId) => {
+    await api.post('AtribuirProblema', {userId, problemId});
+    Alert.alert('Serviço', 'Serviço atribuído com sucesso!')
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -85,9 +103,9 @@ const ServiceProviderMain = () => {
     </Appbar.Header>
     <View>
       <View style={styles.title}>
-        <Text style={styles.titleText} >Bem-vindo Lucas</Text>
+  <Text style={styles.titleText} >Bem-vindo {user.nome} </Text>
       </View>
-      <Text style={styles.titleInfo}>Todos problemas de: Saúde </Text>
+      <Text style={styles.titleInfo}>Todos problemas de {user.area} </Text>
     </View>
     <ScrollView>
       {problems.map(problem => (
@@ -95,11 +113,15 @@ const ServiceProviderMain = () => {
 <View style={styles.problem} key={problem._id}>
                 
 <View style={styles.status}>
-<Text style={styles.descriptions}>Area: </Text>
-<Text style={styles.info}>{problem.areaProblema}</Text>
 
 <Text style={styles.descriptions}>Nome: </Text>
 <Text style={styles.info}>{problem.nomeProblema}</Text>
+{problem.idPrestador === "Em análise" ? 
+  <TouchableOpacity onPress={() => handleAssignService(user._id,problem._id)}>
+  <Icon name="plus" size={24} />
+  </TouchableOpacity> 
+: null }
+
 </View>
 
 <View style={styles.status}>
@@ -113,7 +135,7 @@ const ServiceProviderMain = () => {
   <View style={handleCircleColor(problem.status)}></View>
 </View>
 
-<TouchableOpacity onPress={() => Actions.problemInfo(problem._id)} style={styles.detailsButton}>
+<TouchableOpacity onPress={() => Actions.problemInfo({problemId: problem._id , flag: 0} )} style={styles.detailsButton}>
     <Text style={styles.button} > Ver mais detalhes</Text>
 </TouchableOpacity>
 </View>
@@ -123,6 +145,13 @@ const ServiceProviderMain = () => {
     </View>
   )
 }
+
+ const mapStateToProps = state =>(
+  {
+    email: state.AutenticacaoReducer.emailLogin,
+  }
+);
+
 
 const styles = StyleSheet.create({
   container: {
@@ -148,16 +177,19 @@ const styles = StyleSheet.create({
   },
   title: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+
   },
   titleText: {
     fontSize: 30,
     fontWeight: 'bold',
     color: '#8a2be2',
-    marginBottom: 25
+    marginBottom: 25,
+    paddingTop: 20
   },
   titleInfo: {
     paddingHorizontal: 20,
+    paddingBottom: 20,
     fontSize: 22,
     fontWeight: 'bold',
     color: '#8a2be2'
@@ -179,4 +211,5 @@ const styles = StyleSheet.create({
   
 })
 
-export default ServiceProviderMain;
+
+export default connect(mapStateToProps)(ServiceProviderMain);

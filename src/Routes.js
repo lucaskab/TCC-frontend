@@ -13,7 +13,6 @@ import Buscas from './components/Buscas';
 import Foto from './components/Foto';
 import CompleteProblem from './components/CompleteProblem';
 import ProblemInfo from './components/ProblemInfo';
-import ProblemRemoteLocation from './components/ProblemRemoteLocation';
 import Tab from './components/MyTabs';
 
 
@@ -21,11 +20,8 @@ export default props => (
     <>
     <Router showNavigationBar={false}>
         <Stack key="root">
-        <Scene key='tab' component={Tab} hideNavBar />
         <Scene key='formLogin' component={FormLogin} hideNavBar/>
-        
-        
-        <Scene key='problemRemoteLocation' component={ProblemRemoteLocation} hideNavBar/>
+        <Scene key='tab' component={Tab} hideNavBar />
         <Scene key='perfil' component={Perfil} hideNavBar/>
         <Scene key='fotos' component={Foto} hideNavBar/>
         <Scene key='busca' component={Buscas} />

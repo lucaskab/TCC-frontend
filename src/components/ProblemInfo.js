@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ScrollView} from 'react-native';
 import api from '../../services/api';
 import Constants from 'expo-constants';
 import parseISO from 'date-fns/parseISO';
@@ -10,22 +10,49 @@ export const ProblemInfo = (props) => {
   const [problem, setProblem] = useState({});
   const [statusProblem, setStatusProblem] = useState('');
   const [date, setDate] = useState('');
+  const [changeStatus, setChangeStatus] = useState(props.flag);
+
+  function handleCircleColor(status) {
+    if(status === "Avaliando") {
+      return {
+        width: 15,
+        height: 15,
+        borderRadius: 15/2,
+        backgroundColor: 'red',
+        marginLeft: 10
+      }
+    }
+    else if(status === "Andamento") {
+      return {
+        width: 15,
+        height: 15,
+        borderRadius: 15/2,
+        backgroundColor: 'yellow',
+        marginLeft: 10
+      }
+    }
+    else {
+      return {
+        width: 15,
+        height: 15,
+        borderRadius: 15/2,
+        backgroundColor: 'green',
+        marginLeft: 10
+      }
+    }
+  }
 
   async function loadProblem(){
-    const id = props.data
-    console.log(id);
+    const {problemId} = props;
     const response = await api.get('/searchProblemByID',{
         params: {
-            _id: id
+            _id: problemId
         }
     })
-    console.log(response.data);
     setProblem(response.data)
     setStatusProblem(response.data.status);
     const parsedDate = parseISO(response.data.CreatedAt);
-    console.log(parsedDate);
-    const formattedDate = format(parsedDate, "dd'/'MMMM'/'yyyy 'hora:' kk ':' mm ':' ss", {locale: pt} );
-    console.log(formattedDate);
+    const formattedDate = format(parsedDate, "dd' de 'MMMM' de 'yyyy 'às' kk ':' mm ':' ss", {locale: pt} );
     setDate(formattedDate);
     
 }
@@ -33,18 +60,56 @@ useEffect(() => {
   loadProblem();
 }, []);
 
+const changeProblemStatus = useCallback(async(status) => {
+    await api.post('/changeProblemStatus', {
+        status,
+        problemId: props.problemId,
+    });
+    if(status === "Andamento") {
+        setStatusProblem("Andamento")
+    } else if( status === "Finalizado") {
+        setStatusProblem("Finalizado");
+    }
+    
+}, []);
+
     return (
       <View style={styles.container}>
+          <View>
+              <Text style={styles.title}>Informação completa</Text>
+          </View>
       <View>
-          <Text>{problem.areaProblema}</Text>
-          <Text>{problem.nomeProblema}</Text>
-          <Text>{problem.descricaoProblema}</Text>
-          <Text>{problem.sugestao}</Text>
-          <Text>{problem.status}</Text>
-          <Text>{problem.email}</Text>
-          <Text>{date}</Text>
+          <Text style={styles.description}>Área:</Text>
+          <Text style={styles.info}>{problem.areaProblema}</Text>
+          <Text style={styles.description}>Nome:</Text>
+          <Text style={styles.info}>{problem.nomeProblema}</Text>
+          <Text style={styles.description}>Descrição:</Text>
+          <Text style={styles.info}>{problem.descricaoProblema}</Text>
+          <Text style={styles.description}>Sugestão:</Text>
+          <Text style={styles.info}>{problem.sugestao}</Text>
+          <Text style={styles.description}>Status:</Text>
+          <Text style={styles.info}>{statusProblem}</Text>
+          <View style={handleCircleColor(statusProblem)}></View>
+          <Text style={styles.description}>Criado por:</Text>
+          <Text style={styles.info}>{problem.email}</Text>
+          <Text style={styles.description}>Criado em:</Text>
+          <Text style={styles.info}>{date}</Text>
       </View>
-</View>
+        {changeStatus === 1 ?      
+         <View>
+         <Text>
+          Alterar para:
+        </Text>
+        <TouchableOpacity onPress={() => changeProblemStatus("Andamento")}>
+            <Text>Andamento</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => changeProblemStatus("Finalizado")}>
+            <Text>Finalizado</Text>
+        </TouchableOpacity> 
+        </View>
+        : null        
+        }
+      </View>
     );
 }
 
@@ -81,50 +146,11 @@ const styles = StyleSheet.create({
   description: {
       fontSize: 16,
       lineHeight: 24,
-      color: '#737380',
-  },
-  changeData: {
-      fontSize: 16,
-      lineHeight: 24,
       color: '#8a2be2',
-      textDecorationLine: 'underline',
-      marginBottom: 10
   },
-  problemList: {
-      marginTop: 25
-  },
-  problem: {
-      padding: 24,
-      borderRadius: 8,
-      backgroundColor: '#FFF',
-      marginBottom: 16
-  },
-  problemProperty: {
-      fontSize: 14,
-      color:'#41414d',
-      fontWeight: 'bold'
-  },
-  problemValue: {
-      marginTop: 8,
-      fontSize: 15,
-      marginBottom: 24,
-      color: '#737380'
-  },
-  detailsButton: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-  },
-  detailsButtonText: {
-      color: '#8a2be2',
-      fontSize: 15,
-      fontWeight: 'bold',
-  },
-  modalView: {
-      backgroundColor: '#rgb(235,233,227)',
-      borderRadius: 15,
-      width: 275,
-      borderColor: 'white',
-      borderWidth: 0.7,
-    }
+info: {
+  fontSize: 14,
+  color:'black',
+  marginRight: 20
+},
 }); 

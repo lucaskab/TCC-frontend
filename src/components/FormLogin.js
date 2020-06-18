@@ -20,7 +20,7 @@ const formLogin = props=>{
       alert("Usuário não encontrado");
     }
     else {
-      Actions.tab();
+      Actions.navigation();
     }
   }
 
@@ -101,7 +101,8 @@ const formLogin = props=>{
   const mapStateToProps = state =>(
     {
       email: state.AutenticacaoReducer.emailLogin,
-      senha: state.AutenticacaoReducer.senhaLogin
+      senha: state.AutenticacaoReducer.senhaLogin,
+      email: state.AutenticacaoReducer.emailLogin,
     }
   )
 
