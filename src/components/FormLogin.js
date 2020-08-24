@@ -20,6 +20,7 @@ const formLogin = props=>{
       alert("Usuário não encontrado");
     }
     else {
+      //tab navigation
       Actions.navigation();
     }
   }
@@ -70,25 +71,6 @@ const formLogin = props=>{
               <Text style={styles.text2}> Acessar </Text>
               </TouchableOpacity>
 
-          </View>
-          <View >
-              <Text style = {styles.text}>Cadastro rápido com:</Text>
-          </View>
-          <View style = {styles.posicaoBotoesP}>
-              
-              <TouchableOpacity
-              onPress={() => false}
-              style={styles.botaoFace}  
-              >
-              <Image source={require('../imgs/facebook.png')} style = {{ marginTop: 15, marginLeft: 20}}></Image>
-              </TouchableOpacity>
-    
-              <TouchableOpacity  
-              onPress={() => false}
-              style={styles.botaoGoogle} 
-              >
-              <Image source={require('../imgs/search.png')} style = {{ marginTop: 15, marginLeft: 20}}></Image>
-              </TouchableOpacity>  
           </View>
           </View>
           </ScrollView>   
@@ -179,10 +161,13 @@ const formLogin = props=>{
           marginTop: 20
       },
       PosicaoTudo1: {
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'
       },
       PosicaoTudo: {
-       alignItems: 'center'
+       alignItems: 'center',
+       justifyContent: 'center',
+       margin: 30,
 
     }
   })

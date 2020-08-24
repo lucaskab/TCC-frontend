@@ -1,34 +1,51 @@
-import React, { Component } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
+import React, { Component, useState } from "react";
+import { StyleSheet, Alert, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
 import { Actions } from "react-native-router-flux";
 import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
 import {
   modificaNome, modificaData, modificaEndereco, modificaNumero, modificaCidade, modificaCEP,
-  modificaUF, modificaTelefone, modificaCelular, modificaRG, modificaEmail, modificaConfEmail, modificaSenha
+  modificaUF, modificaTelefone, modificaSenhaPrestador, modificaCelular, modificaRG, modificaEmail, modificaConfEmail, modificaSenha, modificaPrestador
 } from '../actions/CadastroActions';
 
 
-import { Appbar } from 'react-native-paper';
+import { Appbar,RadioButton } from 'react-native-paper';
 
 import api from '../../services/api';
 
 
 
-async function cadastrar(nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
-  rg, email1,confEmail, senha1) {
-    var email = email1;
-    var senha = senha1;
-    if(email === confEmail){
-        const resposta = await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
-          rg, email, senha});
-    }
-  Actions.formLogin();
-  
-};
+
 
 
 const formCadastro = props => {
+  const [checked, setChecked] = useState(false);
+
+  async function cadastrar(nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
+    rg, email1,confEmail, senha1, prestador, senhaPrestador ) {
+      var email = email1;
+      var senha = senha1;
+      console.log(senhaPrestador)
+
+      if (checked && senhaPrestador === "teste" && email === confEmail){
+        await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
+          rg, email, senha, prestador});
+        Alert.alert("Sucesso","Cadastro realizado com sucesso!");
+        Actions.formLogin();
+      }
+      else if(email === confEmail && checked === false){
+          await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
+            rg, email, senha, prestador});
+            Alert.alert("Sucesso","Cadastro realizado com sucesso!");
+            Actions.formLogin();
+      }
+      else {
+
+        Alert.alert("Erro","Dados inválidos");
+      }
+    
+    
+  };
   return (
     <ImageBackground style={{ width: '100%', height: '100%' }} source={require('../imgs/telafundo2.jpg')}>
         
@@ -203,12 +220,55 @@ const formCadastro = props => {
                 onChangeText={texto => props.modificaSenha(texto)}
               />
             </View>
+        <View>
+      <RadioButton
+        value="first"
+        status={ checked === false ? 'checked' : 'unchecked' }
+        onPress={() => setChecked(false)}
+        color="#8E4Dff"
+      />
+      <Text>Usuário</Text>
+      </View>
+      <View >
+      <RadioButton
+        value="second"
+        status={ checked === true ? 'checked' : 'unchecked' }
+        onPress={() => setChecked(true)}
+        color="#8E4Dff"
+      />
+      <Text>Prestador de Serviço</Text>
+      { checked ? 
+      <View style={{justifyContent:"center",alignItems:"center", flexDirection: "column"}}>
+        <View style={styles.SectionStyle}>
+        <TextInput
+          style={{ marginLeft: 10, fontSize: 20, width: 345 }}
+          placeholder="Área de Serviço"
+          placeholderTextColor='black'
+          value={props.prestador}
+          onChangeText={texto => props.modificaPrestador(texto)}
+        />
+      </View>
+
+      <View style={styles.SectionStyle}>
+      <TextInput
+        style={{ marginLeft: 10, fontSize: 20, width: 345 }}
+        placeholder="Senha do Prestador de Serviço"
+        secureTextEntry={true}
+        placeholderTextColor='black'
+        value={props.senhaPrestador}
+        onChangeText={texto => props.modificaSenhaPrestador(texto)}
+      />
+      </View>
+        </View>
+        : null
+      }
+      </View>
           </View>
-          <View style={{ alignItems: 'center' }}>
+          <View style={{ alignItems: 'center', marginBottom: 80 }}>
             <TouchableOpacity
               onPress={() => cadastrar(props.nome, props.dataNasc, props.endereco, props.numero, props.cidade,
                                         props.CEP, props.UF, props.telefone, props.celular, props.RG, props.email1,
-                                        props.confEmail, props.senha1)}
+                                        props.confEmail, props.senha1,props.prestador, props.senhaPrestador)}
               style={styles.SectionStyle}
             >
               <Text style={styles.text2}> Registrar </Text>
@@ -238,11 +298,14 @@ const mapStateToProps = state => (
     email1: state.CadastroReducer.emailCadastro,
     confEmail: state.CadastroReducer.confEmailCadastro,
     senha1: state.CadastroReducer.senhaCadastro,
+    prestador: state.CadastroReducer.prestador,
+    senhaPrestador: state.CadastroReducer.senhaPrestador
   }
 )
 export default connect(mapStateToProps, {
   modificaNome, modificaData, modificaEndereco, modificaNumero, modificaCidade, modificaCEP,
-  modificaUF, modificaTelefone, modificaCelular, modificaRG, modificaEmail, modificaConfEmail, modificaSenha
+  modificaUF, modificaTelefone, modificaCelular, modificaRG, modificaEmail, modificaConfEmail, modificaSenha, modificaPrestador,
+  modificaSenhaPrestador,
 })(formCadastro);
 
 const styles = StyleSheet.create({

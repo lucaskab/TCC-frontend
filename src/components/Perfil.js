@@ -25,23 +25,13 @@ export const Perfil = (props) =>  {
           { text: "Sim", onPress: () => deletarProblema(id)  }
         ])
       }
-    
-
-    function showProblemForm(id){
-        props.modificaIDEscolhido(id);
-        Actions.completeProblem();
-    }
 
     async function deletarProblema(id){
 
         const resposta = await api.post('deletarProblema', {id});
         Alert.alert("Sucesso","O problema foi deletado!!!")
     } 
-   
-    
-
-    
-    
+      
     async function loadProblems(){
         const email = props.email
         const response = await api.get('/searchProblemsByUser',{
@@ -102,17 +92,8 @@ useEffect(() => {
                 <View style={styles.problem}>
                 <View style={styles.detailsButton}>
                 <Text style={styles.problemProperty}>Nome: </Text>
-                <TouchableOpacity onPress={() => onPressShowSimpleAlert(problem._id)}>
-                    <CheckAlert
-                    ref={ref => (this.checkAlert = ref)}
-                    // available Modal's props options: https://facebook.github.io/react-native/docs/modal.html
-                    modalProps={{
-                        transparent: true,
-                        animationType: "slide",
-                    }}
-                    checkBoxColor="red"
-                    />
-                    <Feather name="trash-2" size={20} color="#8a2be2" />
+                <TouchableOpacity onPress={() => deletarProblema(problem._id)}>
+                <Feather name="trash-2" size={20} color="#8a2be2" />
                 </TouchableOpacity>
                 </View>
                 <Text style={styles.problemValue}>{problem.nomeProblema}</Text>
@@ -124,7 +105,7 @@ useEffect(() => {
                 <Text style={styles.problemValue}>{problem.descricaoProblema}</Text>
 
 
-                <TouchableOpacity onPress={() => showProblemForm(problem._id)} style={styles.detailsButton}>
+                <TouchableOpacity onPress={() => Actions.problemInfo({problemId: problem._id , flag: 0} )} style={styles.detailsButton}>
                     <Text style={styles.detailsButtonText}> Ver mais detalhes</Text>
                     <Feather name="arrow-right" size={20} color="#8a2be2" />
                 </TouchableOpacity>

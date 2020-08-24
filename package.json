@@ -65,7 +65,7 @@
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.3.0",
     "react-native-step-indicator": "^0.0.11",
-    "react-native-svg": "9.5.1",
+    "react-native-svg": "9.13.3",
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "~0.11.7",
     "react-native-zoom-image": "^0.1.2",

@@ -32,11 +32,6 @@ function HomeScreen({ navigation }, props) {
   const [busca,setBusca] = useState('');
   const [activityStatus,setActivityStatus] = useState(false);
 
-  /*function showProblemInfo(id){
-    props.modificaIDEscolhido(id);
-    Actions.completeProblem();
-  }*/
-
  async function LoadAddress(){
    const local1 = await geocodeAsync(busca);
 
@@ -177,11 +172,12 @@ function HomeScreen({ navigation }, props) {
       {Problems.map(problem => (
         <MapView.Marker key={problem._id} coordinate={{ latitude: problem.posicao.coordinates[1] , longitude: problem.posicao.coordinates[0], title:"title", description:"description" }} >
         <LoadIcons icone={problem.areaProblema} />
-        <Callout onPress={() => showProblemInfo(problem._id)}>
+        <Callout onPress={() => Actions.problemInfo({problemId: problem._id , flag: 0} )}>
             <View  style={ styles.callout }>   
               <Text style={styles.user}>Area: {problem.areaProblema} </Text>
               <Text style={styles.problem}> Nome: {problem.nomeProblema}</Text>
               <Text style={styles.problem}> Descrição: {problem.descricaoProblema}</Text>
+              <Text style={styles.problem}> Status: {problem.status}</Text>
               <Text style={styles.data}>Reportado em: {problem.CreatedAt} </Text>
             </View>
         </Callout>
@@ -302,7 +298,7 @@ const styles = StyleSheet.create({
   },
   callout: {
     width: 200,
-    height: 100
+    height: 150
   },
   user:{
     fontWeight: 'bold',

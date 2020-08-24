@@ -3,11 +3,13 @@ import { StyleSheet, Image, ScrollView, Picker, TextInput,Alert, Keyboard, Touch
 import { Actions} from 'react-native-router-flux'
 import {  View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Button, Input, Icon } from 'native-base';
 import { connect } from 'react-redux';
+import Data from '../data/data';
+import AreaData from '../data/areaData';
 import { getCurrentPositionAsync, geocodeAsync } from 'expo-location';
 import { modificaDescricao,modificaSugestao} from '../actions/ProblemaActions'
 import api from '../../services/api';
 import StepIndicator from 'react-native-step-indicator';
-import { Appbar } from 'react-native-paper';
+import { Appbar, RadioButton } from 'react-native-paper';
 import MapView from 'react-native-maps';
 import { MaterialIcons} from '@expo/vector-icons';
 
@@ -30,18 +32,13 @@ const IndicatorStyles = {
     export const EnviarProblema = (props) =>  {
     const [dataLoaded, setDataLoaded] = useState(false);
     const [remoteLocation, setRemoteLocation] = useState(false);
-    const [escolha, setEscolha] = useState("Saúde");
-    const [nomeProblema, setNomeProblema] = useState("Hospital Lotado");
+    const [escolha, setEscolha] = useState("Acessibilidade");
+    const [nomeProblema, setNomeProblema] = useState("Acessibilidade digital");
     const [currentRegion, setCurrentRegion] = useState(null);
     const [bolinhas, setBolinhas] = useState(0);
     const [local, setLocal] = useState([]);
     const [busca,setBusca] = useState('');
-
-    const DismissKeyboard = ({ children }) => (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        {children}
-      </TouchableWithoutFeedback>
-    );
+    const [checked, setChecked] = useState('first');
     
     async function LoadAddress(){
 
@@ -76,7 +73,7 @@ const IndicatorStyles = {
         longitudeDelta: 0.02,
       })
        } }
-   
+
     async function cadastrarProblems(email, nomeProblema, Descricao, areaProblema, latitude, longitude, sugestao){
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
       const urlFoto =  [];
@@ -98,11 +95,6 @@ const IndicatorStyles = {
 
       urlFoto[i] = result.data.url;
     }
-      if(remoteLocation === true) {
-      await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema,latitude,longitude, sugestao})
-      Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
-      Actions.reset('navigation');
-      }
 
       await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema, latitude, longitude, sugestao})
       Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
@@ -112,12 +104,15 @@ const IndicatorStyles = {
 
     function RemoteLocation(){
       setRemoteLocation(true);
+      setChecked('second');
     }
     function MomentLocation(){
       setRemoteLocation(false);
+      setChecked('first');
       loadInitialPosition();
     }
     async function loadInitialPosition(){
+
       setRemoteLocation(false);
      
         const { coords } = await getCurrentPositionAsync({
@@ -136,10 +131,6 @@ const IndicatorStyles = {
 
     useEffect(() => {
 
-      
-
-      
-  
       loadInitialPosition();
     }, []);
   
@@ -177,42 +168,243 @@ const IndicatorStyles = {
     ];
 
 function NomeProblema(){
-    if(escolha === "Saúde"){
+    if(escolha === "Acessibilidade"){
         return(
             <Picker
             style={{ backgroundColor: "#DCDCDC", width: 210, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
             >
-              <Picker.Item label="Hospital Lotado" value= "Hospital Lotado" />
-              <Picker.Item label="Foco de Dengue" value="Foco de Dengue" />
+            {Data.Acessibilidade.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
           </Picker>
         )
     }
-    if(escolha === "Trânsito"){
+    if(escolha === "Animais"){
         return(
             <Picker
             style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
             >
-              <Picker.Item label="Semáforo Quebrado" value= "Semáforo Quebrado" />
-              <Picker.Item label="Acidente" value="Acidente" />
+              {Data.Animais.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
           </Picker>
         )
     }
-    if(escolha === "Ambiental"){
+    if(escolha === "Assistência Social"){
       return(
           <Picker
           style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
           selectedValue={nomeProblema}
           onValueChange={value => setNomeProblema(value)}
           >
-            <Picker.Item label="Poluição" value= "Poluição" />
-            <Picker.Item label="Alagamento" value="Alagamento" />
+            {Data.Assistência_Social.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+
         </Picker>
       )
   }
+  if(escolha === "Comércio e Serviço"){
+    return(
+        <Picker
+        style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+        selectedValue={nomeProblema}
+        onValueChange={value => setNomeProblema(value)}
+        >
+          {Data.Comércio_e_Serviço.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+
+      </Picker>
+    )
+}
+if(escolha === "Conservação Urbana"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Conservação_Urbana.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Cultura, Lazer e Turismo"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Cultura_Lazer_Turismo.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Defesa Civil"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Defesa_Civil.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Documentos e Processos"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Documentos_Processos.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Educação"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Educação.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Limpeza Urbana"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Limpeza_Urbana.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Meio Ambiente"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Meio_Ambiente.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Obras, Estruturas e Imóveis"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Obras_Estruturas_Imóveis.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Ordem Pública"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Ordem_Pública.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Saúde e Vigilancia Sanitária"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Saúde_Vigilancia_Sanitária.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Serviços Funerários"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Serviços_Funerários.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Trânsito"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Trânsito.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Transporte"){
+  return(
+      <Picker
+      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      selectedValue={nomeProblema}
+      onValueChange={value => setNomeProblema(value)}
+      >
+        {Data.Transporte.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+
   
   }
 
@@ -250,22 +442,21 @@ function SwipeEsquerda(){
             onValueChange={value => setEscolha(value) , value => setEscolha(value) 
             }
         >
-      
-                <Picker.Item label="Saúde" value= "Saúde" />
-                <Picker.Item label="Trânsito" value="Trânsito" />
-                <Picker.Item label="Ambiental" value="Ambiental" />         
+          {AreaData.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
         </Picker>
     </View> 
     <View style={styles.picker}>
             <Text style={styles.text}>{'Nome do Problema:'}</Text>
                 <NomeProblema />
     </View>      
-                <Text style={styles.text}>{'Descrição do Problema:'}</Text>      
+                <Text style={styles.text}>{'Descrição:'}</Text>      
                 <View style={styles.textAreaContainer} >
                     <TextInput
                       style={styles.textArea}
                       underlineColorAndroid="transparent"
-                      placeholder="Descreva melhor o problema:"
+                      placeholder="Descreva detalhadamente o problema."
                       placeholderTextColor="grey"
                       numberOfLines={10}
                       multiline={true}
@@ -274,7 +465,7 @@ function SwipeEsquerda(){
                     />
                 </View>
 
-                <Text style={styles.text}>{'Sugestão para o problema:'}</Text>      
+                <Text style={styles.text}>{'Sugestão:'}</Text>      
                 <View style={styles.textAreaContainer} >
                     <TextInput
                       style={styles.textArea}
@@ -311,38 +502,32 @@ function SwipeEsquerda(){
       />
       </View>
 
-      <Button  onPress={() => RemoteLocation()} style={{ marginTop:375, marginBottom: 10, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
-        <Text >Selecionar uma localização</Text>
-      </Button>
-
-      <Button  onPress={MomentLocation} style={{ marginTop:10, marginBottom: 10, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
-        <Text >Localização atual</Text>
-      </Button>
-
+      <View style={{flexDirection: "row",alignItems: 'center', marginTop:375}}>
+      <RadioButton
+        value="first"
+        status={ checked === 'first' ? 'checked' : 'unchecked' }
+        onPress={MomentLocation}
+        color="#8E4Dff"
+      />
+      <Text>Localização Atual</Text>
+      </View>
+      <View style={{flexDirection: "row", alignItems: 'center'}}>
+      <RadioButton
+        value="second"
+        status={ checked === 'second' ? 'checked' : 'unchecked' }
+        onPress={() => RemoteLocation()}
+        color="#8E4Dff"
+      />
+      <Text>Selecionar uma localização</Text>
+      </View>
       {remoteLocation && (
         <>
-              <DismissKeyboard>
-              {currentRegion ?
-              
-              <MapView   initialRegion={currentRegion} style={styles.map} region={currentRegion} >
-              {local.map(location => (
-                <MapView.Marker  draggable={true} onDragEnd={(e) => {setCurrentRegion({latitude:e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude})}} coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude }} />
-              ))}
-           
-              </MapView>
-              : null
-            }
-              
-              
-              </DismissKeyboard>
-              <View style={styles.addForm} >
-                <TouchableOpacity  onPress={() => Actions.enviarProblema({local: currentRegion, set: true})} style={styles.addButton}>
-                  <Text style={{fontSize:16,fontWeight: 'bold',color: '#FFF'}}>Selecionar</Text>
-                </TouchableOpacity>
+                <View style={styles.addForm} >
+
               </View> 
               
               
-               <KeyboardAvoidingView style={styles.searchForm} behavior="padding" keyboardVerticalOffset= '20'>
+               <View style={styles.searchForm}>
                 <TextInput 
                 style={styles.searchInput} 
                 placeholder="Pesquisar uma localização..."
@@ -356,7 +541,23 @@ function SwipeEsquerda(){
                   <MaterialIcons name="my-location" size={20} color="#FFF" />
                 </TouchableOpacity>
         
-              </KeyboardAvoidingView>
+              </View>
+
+              <View>
+              {currentRegion ?
+              
+              <MapView   initialRegion={currentRegion} style={styles.map} region={currentRegion} >
+              {local.map(location => (
+                <MapView.Marker  draggable={true} onDragEnd={(e) => {setCurrentRegion({latitude:e.nativeEvent.coordinate.latitude, longitude: e.nativeEvent.coordinate.longitude})}} coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude }} />
+              ))}
+           
+              </MapView>
+              : null
+            }
+                
+              
+              </View>
+
               </>
       )}
 
@@ -424,7 +625,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: 400,
-    height: 800
+    height: 300
   },
   avatar: {
     width: 54,
@@ -449,8 +650,8 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   searchForm: {
-    top: 10,
-    left: 20,
+    top: 60,
+    left: 1,
     right: 20,
     zIndex: 5,
     flexDirection: 'row',
@@ -488,6 +689,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
     marginLeft: 15,
   },
   addForm: {

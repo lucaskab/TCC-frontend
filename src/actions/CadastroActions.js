@@ -82,3 +82,15 @@ export const modificaSenha = (texto) => {
         dadoParaOReducer: texto
     }
 }
+export const modificaPrestador = (texto) => {
+    return {
+        type: 'modifica_prestador',
+        dadoParaOReducer: texto
+    }
+}
+export const modificaSenhaPrestador = (texto) => {
+    return {
+        type: 'modifica_senhaPrestador',
+        dadoParaOReducer: texto
+    }
+}

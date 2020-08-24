@@ -33,18 +33,7 @@ useEffect(() => {
           <View style={styles.problem}>
           <View style={styles.detailsButton}>
           <Text style={styles.problemProperty}>Nome: </Text>
-          {/*<TouchableOpacity onPress={() => onPressSimpleAlert(problem._id)}>
-              <CheckAlert
-              ref={ref => (this.checkAlert = ref)}
-              // available Modal's props options: https://facebook.github.io/react-native/docs/modal.html
-              modalProps={{
-                  transparent: true,
-                  animationType: "slide",
-              }}
-              checkBoxColor="red"
-              />
-              <Feather name="trash-2" size={20} color="#8a2be2" />
-            </TouchableOpacity>*/}
+
           </View>
           <Text style={styles.problemValue}>{problem.nomeProblema}</Text>
 

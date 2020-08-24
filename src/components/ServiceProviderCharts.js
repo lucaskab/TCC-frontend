@@ -1,5 +1,6 @@
 import React, {useState, useCallback} from 'react';
-import { ScrollView, View, Text, Platform, Animated, Button } from 'react-native';
+import { ScrollView, View, Text, Platform, Animated, Button, Dimensions } from 'react-native';
+import {getMonth} from 'date-fns';
 import {
   LineChart,
   BarChart,
@@ -13,7 +14,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../../services/api';
 
 const ServiceProviderCharts = () => {
-  const [problems, setProblems] = useState(0);
+  const [problems, setProblems] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   const [selectedDate1, setSelectedDate1] = useState(new Date());
   const [selectedDate2, setSelectedDate2] = useState(new Date());
   const [showDatePicker1, setShowDatePicker1] = useState(false);
@@ -29,14 +30,22 @@ const ServiceProviderCharts = () => {
 
   const handleSearch = useCallback(async () => {
     console.log(selectedDate1,selectedDate2)
-    const response = await api.get('searchFilterBetweenDates',{
-      params: {
-        dataInicio: selectedDate1,
-        dataFinal: selectedDate2,
-      }
-    })
-    setProblems(response.data)
-  },[]);
+    const response = await api.get('/searchAllProblems');
+    const filter = response.data;
+    var dateArray = [];
+    var finalArray = [0,0,0,0,0,0,0,0,0,0,0,0];
+    const problema = filter.filter(problem => problem.areaProblema === "Saúde").map(problem => {
+      dateArray.push(problem.CreatedAt);
+    });
+    for(var i=0; i<dateArray.length; i++) {
+      var year = dateArray[i].slice(0,4);
+      var month = dateArray[i].slice(5,7);
+      var day = dateArray[i].slice(8,10);
+      var date = getMonth(new Date(year,month,day));
+      finalArray[date-1] += 1;
+    }
+    setProblems(finalArray);
+  },[problems]);
 
   const handleDateChanged1 = useCallback(
     (event,date) => {
@@ -62,23 +71,22 @@ const ServiceProviderCharts = () => {
     [],
   );
 
-
+console.log(problems);
   return (
     <Animated.View>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} >
   <Text>
     Bezier Line Chart
   </Text>
+
   <LineChart
     data={{
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
       datasets: [{
-        data: [
-          problems
-        ]
-      }]
+        data: problems        
+        }]
     }}
-    width={800} // from react-native
+    width={700} // from react-native
     height={220}
     chartConfig={{
       backgroundColor: '#e26a00',
@@ -90,11 +98,13 @@ const ServiceProviderCharts = () => {
         borderRadius: 16
       }
     }}
+    bezier
     style={{
       marginVertical: 8,
       borderRadius: 16
     }}
   />
+
 </ScrollView>
 <TouchableOpacity onPress={handleToggleDatePicker1}>
   <Text>Abrir calendario</Text>

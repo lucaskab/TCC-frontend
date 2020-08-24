@@ -11,12 +11,20 @@ const INITIAL_STATE = {
     RGCadastro:'',
     emailCadastro:'',
     confEmailCadastro:'',
-    senhaCadastro:''
+    senhaCadastro:'',
+    prestador: '',
+    senhaPrestador: '',
 }
 
 export default (state = INITIAL_STATE, action) => {
     if(action.type == 'modifica_nome'){
         return { ...state, nomeCadastro: action.dadoParaOReducer}
+    }
+    if(action.type == 'modifica_prestador'){
+        return { ...state, prestador: action.dadoParaOReducer}
+    }
+    if(action.type == 'modifica_senhaPrestador'){
+        return { ...state, senhaPrestador: action.dadoParaOReducer}
     }
     if(action.type == 'modifica_data'){
         return { ...state, dataNascCadastro: action.dadoParaOReducer}
