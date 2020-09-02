@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import { ScrollView, View, Text, Platform, Animated, Button, Dimensions } from 'react-native';
 import {getMonth} from 'date-fns';
 import {
@@ -12,13 +12,15 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../../services/api';
+import { connect } from 'react-redux';
 
-const ServiceProviderCharts = () => {
+const ServiceProviderCharts = (props) => {
   const [problems, setProblems] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   const [selectedDate1, setSelectedDate1] = useState(new Date());
   const [selectedDate2, setSelectedDate2] = useState(new Date());
   const [showDatePicker1, setShowDatePicker1] = useState(false);
   const [showDatePicker2, setShowDatePicker2] = useState(false);
+  const [user, setUser] = useState({});
 
   const handleToggleDatePicker1 = useCallback(() => {
     setShowDatePicker1((state) => !state);
@@ -28,13 +30,18 @@ const ServiceProviderCharts = () => {
     setShowDatePicker2((state) => !state);
   }, []);
 
+  useEffect(() => {
+    const email = props.email;
+    api.post('userscadastrados', {email}).then(response => {
+      setUser(response.data);
+    })} , []);
+
   const handleSearch = useCallback(async () => {
-    console.log(selectedDate1,selectedDate2)
     const response = await api.get('/searchAllProblems');
     const filter = response.data;
     var dateArray = [];
     var finalArray = [0,0,0,0,0,0,0,0,0,0,0,0];
-    const problema = filter.filter(problem => problem.areaProblema === "Saúde").map(problem => {
+    const problema = filter.filter(problem => problem.areaProblema === `${user.prestador}`).map(problem => {
       dateArray.push(problem.CreatedAt);
     });
     for(var i=0; i<dateArray.length; i++) {
@@ -70,8 +77,6 @@ const ServiceProviderCharts = () => {
     },
     [],
   );
-
-console.log(problems);
   return (
     <Animated.View>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} >
@@ -124,4 +129,10 @@ console.log(problems);
   )
 }
 
-export default ServiceProviderCharts;
+const mapStateToProps = state =>(
+  {
+    email: state.AutenticacaoReducer.emailLogin,
+  }
+);
+
+export default connect(mapStateToProps)(ServiceProviderCharts);

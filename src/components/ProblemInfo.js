@@ -1,16 +1,22 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert, Dimensions, ScrollView} from 'react-native';
+import { Text, FlatList, View, StyleSheet, Image,Alert, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import api from '../../services/api';
 import Constants from 'expo-constants';
 import parseISO from 'date-fns/parseISO';
 import pt from 'date-fns/locale/pt';
 import {format, subMonths} from 'date-fns';
+import { requestPermissionsAsync, reverseGeocodeAsync } from 'expo-location';
+import { Actions } from "react-native-router-flux";
+import { Appbar } from 'react-native-paper';
 
 export const ProblemInfo = (props) => {
   const [problem, setProblem] = useState({});
+  const [photoName, setPhotoName] = useState([]);
   const [statusProblem, setStatusProblem] = useState('');
   const [date, setDate] = useState('');
   const [changeStatus, setChangeStatus] = useState(props.flag);
+  const [coordinates, setCoordinates] = useState({latitude:"",longitude:""});
+  const [address, setAddress] = useState({rua:"",numero:"",cidade:"",estado:"",pais:""});
 
   function handleCircleColor(status) {
     if(status === "Avaliando") {
@@ -51,14 +57,26 @@ export const ProblemInfo = (props) => {
     })
     setProblem(response.data)
     setStatusProblem(response.data.status);
+    setPhotoName(response.data.urlFoto);
     const parsedDate = parseISO(response.data.CreatedAt);
-    const formattedDate = format(parsedDate, "dd' de 'MMMM' de 'yyyy 'às' kk ':' mm ':' ss", {locale: pt} );
+    const formattedDate = format(parsedDate, "dd' de 'MMMM' de 'yyyy 'às' kk':'mm':'ss", {locale: pt} );
     setDate(formattedDate);
-    
+    const place = {latitude:response.data.posicao.coordinates[1],
+      longitude:response.data.posicao.coordinates[0]};
+    const cidade =  await reverseGeocodeAsync(place);
+    const getCity = await api.get(`https://viacep.com.br/ws/${cidade[0].postalCode}/json/`);
+    setAddress({
+      rua: cidade[0].street,
+      numero: cidade[0].name,
+      cidade: getCity.data.localidade,
+      estado: getCity.data.uf,
+      pais: cidade[0].isoCountryCode
+    });
 }
 useEffect(() => {
   loadProblem();
 }, []);
+
 
 const changeProblemStatus = useCallback(async(status) => {
     await api.post('/changeProblemStatus', {
@@ -66,15 +84,30 @@ const changeProblemStatus = useCallback(async(status) => {
         problemId: props.problemId,
     });
     if(status === "Andamento") {
-        setStatusProblem("Andamento")
+        setStatusProblem("Andamento");
+        Alert.alert("Sucesso","Status atualizado com sucesso!!!");
+        Actions.tab()
     } else if( status === "Finalizado") {
         setStatusProblem("Finalizado");
+        Alert.alert("Sucesso","Status atualizado com sucesso!!!");
+        Actions.tab();
     }
+    else if( status === "Avaliando") {
+      setStatusProblem("Avaliando");
+      Alert.alert("Sucesso","Status atualizado com sucesso!!!");
+      Actions.tab();
+  }
     
 }, []);
 
     return (
-      <View style={styles.container}>
+      <>
+      <Appbar.Header SafeAreaView={0} statusBarHeight={20} style={{backgroundColor: '#8a2be2'}}>
+      <Appbar.Action icon="arrow-left" onPress={()=> Actions.perfil()} />
+        <Appbar.Content title="Informações" />
+      </Appbar.Header>
+
+      <ScrollView style={styles.container}>
           <View>
               <Text style={styles.title}>Informação completa</Text>
           </View>
@@ -83,13 +116,17 @@ const changeProblemStatus = useCallback(async(status) => {
           <Text style={styles.info}>{problem.areaProblema}</Text>
           <Text style={styles.description}>Nome:</Text>
           <Text style={styles.info}>{problem.nomeProblema}</Text>
+          <Text style={styles.description}>Endereço:</Text>
+          <Text style={styles.info}>{address.rua}, {address.numero}, {address.cidade}, {address.estado}, {address.pais}</Text>
           <Text style={styles.description}>Descrição:</Text>
           <Text style={styles.info}>{problem.descricaoProblema}</Text>
           <Text style={styles.description}>Sugestão:</Text>
           <Text style={styles.info}>{problem.sugestao}</Text>
-          <Text style={styles.description}>Status:</Text>
-          <Text style={styles.info}>{statusProblem}</Text>
-          <View style={handleCircleColor(statusProblem)}></View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={styles.description}>Status:</Text>
+            <Text style={styles.info1}>  {statusProblem}</Text>
+            <View style={handleCircleColor(statusProblem)}></View>
+          </View>
           <Text style={styles.description}>Criado por:</Text>
           <Text style={styles.info}>{problem.email}</Text>
           <Text style={styles.description}>Criado em:</Text>
@@ -97,19 +134,37 @@ const changeProblemStatus = useCallback(async(status) => {
       </View>
         {changeStatus === 1 ?      
          <View>
-         <Text>
-          Alterar para:
-        </Text>
-        <TouchableOpacity onPress={() => changeProblemStatus("Andamento")}>
-            <Text>Andamento</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => changeProblemStatus("Finalizado")}>
-            <Text>Finalizado</Text>
-        </TouchableOpacity> 
+            <Text style={styles.description}>
+              Alterar status para:
+            </Text>
+            <View style={{flexDirection: 'row', justifyContent:"space-around"}}>
+            <TouchableOpacity  onPress={() => changeProblemStatus("Avaliando")}>
+                  <View style={{flex: 0.5, borderRadius: 10, padding: 10, backgroundColor: "white",borderWidth: 3, borderColor: '#8a2be2', marginTop: 10}}>
+                    <Text>Avaliando</Text>
+                  </View>
+              </TouchableOpacity>
+              <TouchableOpacity  onPress={() => changeProblemStatus("Andamento")}>
+                  <View style={{flex: 0.5, borderRadius: 10, padding: 10, backgroundColor: "white",borderWidth: 3, borderColor: '#8a2be2', marginTop: 10}}>
+                    <Text>Andamento</Text>
+                  </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => changeProblemStatus("Finalizado")}>
+                  <View style={{flex: 0.5, borderRadius: 10, padding: 10, backgroundColor: "white",borderWidth: 3, borderColor: '#8a2be2', marginTop: 10}}>
+                    <Text>Finalizado</Text>
+                  </View>
+              </TouchableOpacity>
+            </View> 
         </View>
         : null        
         }
-      </View>
+         <ScrollView style={{flexDirection: 'row', marginTop: 30, marginBottom: 80}} horizontal={true} showsHorizontalScrollIndicator={false} >
+          {photoName.map(uri => (
+            <Image style={{width: 150, height: 150, marginRight: 10}} source={{uri: `https://291cbbc65740.ngrok.io/files/${uri}`}}></Image> 
+          ))} 
+          </ScrollView> 
+               
+      </ScrollView>
+      </>
     );
 }
 
@@ -139,8 +194,7 @@ const styles = StyleSheet.create({
   title: {
       fontSize: 30,
       marginBottom: 16,
-      marginTop: 40,
-      color: '#13131a',
+      color: '#8a2be2',
       fontWeight: 'bold'
   },
   description: {
@@ -151,6 +205,14 @@ const styles = StyleSheet.create({
 info: {
   fontSize: 14,
   color:'black',
-  marginRight: 20
+  marginRight: 20,
+  marginBottom: 10
+},
+info1: {
+  fontSize: 14,
+  color:'black',
+  marginRight: 20,
+  marginBottom: 10,
+  marginTop: 10,
 },
 }); 

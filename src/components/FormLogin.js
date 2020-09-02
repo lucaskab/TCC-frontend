@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView,TextInput } from "react-native";
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
@@ -20,10 +20,17 @@ const formLogin = props=>{
       alert("Usuário não encontrado");
     }
     else {
-      //tab navigation
-      Actions.navigation();
+      if(resposta.data.prestador){
+        Actions.tab();
+      }
+      else Actions.navigation();
     }
   }
+
+  useEffect(() => {
+    props.modificaEmail1("");
+    props.modificaSenha1("");
+  },[])
 
   return (
       <ImageBackground style={{ width: '100%', height: '100%'}} source={require('../imgs/telafundo2.jpg')}>

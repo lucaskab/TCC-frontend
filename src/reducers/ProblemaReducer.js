@@ -19,7 +19,6 @@ export default (state = INITIAL_STATE, action) => {
     }
 
     else if(action.type == 'modifica_Foto2'){
-        console.log(state);
         return {  ...state, Foto2:action.dadoParaOReducer}
     }
     else if(action.type == 'modifica_Foto3'){

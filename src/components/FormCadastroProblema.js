@@ -79,8 +79,10 @@ export const FormCadastroProblema = (props) => {
     
     else if (Counter < 6) {
       setActivityStatus(true);
-      let photo = await this.camera.takePictureAsync()
+      let photo = await this.camera.takePictureAsync();
+
       let uri = photo.uri;
+
       
       if(Counter == 1){
         props.modificaFoto1(uri);

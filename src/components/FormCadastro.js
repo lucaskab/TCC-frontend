@@ -1,5 +1,5 @@
 import React, { Component, useState } from "react";
-import { StyleSheet, Alert, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Alert, View, Text, TouchableOpacity, Picker, ImageBackground, Image, ScrollView, TextInput, KeyboardAvoidingView } from "react-native";
 import { Actions } from "react-native-router-flux";
 import { TextInputMask } from 'react-native-masked-text';
 import { connect } from 'react-redux';
@@ -7,7 +7,7 @@ import {
   modificaNome, modificaData, modificaEndereco, modificaNumero, modificaCidade, modificaCEP,
   modificaUF, modificaTelefone, modificaSenhaPrestador, modificaCelular, modificaRG, modificaEmail, modificaConfEmail, modificaSenha, modificaPrestador
 } from '../actions/CadastroActions';
-
+import AreaData from '../data/areaData';
 
 import { Appbar,RadioButton } from 'react-native-paper';
 
@@ -25,7 +25,6 @@ const formCadastro = props => {
     rg, email1,confEmail, senha1, prestador, senhaPrestador ) {
       var email = email1;
       var senha = senha1;
-      console.log(senhaPrestador)
 
       if (checked && senhaPrestador === "teste" && email === confEmail){
         await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
@@ -54,7 +53,7 @@ const formCadastro = props => {
           <Appbar.Content title="Cadastro" />
         </Appbar.Header>
         
-     <KeyboardAvoidingView behavior="padding" style={styles.PosicaoTudo} keyboardVerticalOffset= '30' >
+     <View style={styles.PosicaoTudo}>
       <ScrollView>
           <View style={styles.container}>
             <View style={styles.SectionStyle}>
@@ -220,39 +219,45 @@ const formCadastro = props => {
                 onChangeText={texto => props.modificaSenha(texto)}
               />
             </View>
-        <View>
+      <View style={{}}>     
+        <View style={{flexDirection: 'row', alignItems:'center'}}>
       <RadioButton
         value="first"
         status={ checked === false ? 'checked' : 'unchecked' }
         onPress={() => setChecked(false)}
         color="#8E4Dff"
       />
-      <Text>Usuário</Text>
+      <Text style={{fontSize: 25}}>Usuário</Text>
       </View>
-      <View >
+      <View style={{flexDirection: 'row', alignItems:'center', marginBottom: 20}} >
       <RadioButton
         value="second"
         status={ checked === true ? 'checked' : 'unchecked' }
         onPress={() => setChecked(true)}
         color="#8E4Dff"
       />
-      <Text>Prestador de Serviço</Text>
+      <Text style={{fontSize: 25}}>Prestador de Serviço</Text>
+      </View> 
       { checked ? 
       <View style={{justifyContent:"center",alignItems:"center", flexDirection: "column"}}>
         <View style={styles.SectionStyle}>
-        <TextInput
-          style={{ marginLeft: 10, fontSize: 20, width: 345 }}
-          placeholder="Área de Serviço"
-          placeholderTextColor='black'
-          value={props.prestador}
-          onChangeText={texto => props.modificaPrestador(texto)}
-        />
+        
+        <Picker
+            style={{flex: 1 , height:50 }}
+            selectedValue={props.prestador}
+            onValueChange={texto => props.modificaPrestador(texto)}
+        >
+          {AreaData.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+        </Picker>
+
       </View>
 
       <View style={styles.SectionStyle}>
       <TextInput
         style={{ marginLeft: 10, fontSize: 20, width: 345 }}
-        placeholder="Senha do Prestador de Serviço"
+        placeholder="Senha do Prestador"
         secureTextEntry={true}
         placeholderTextColor='black'
         value={props.senhaPrestador}
@@ -277,7 +282,7 @@ const formCadastro = props => {
           </View>
           
       </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </ImageBackground>
 
 

@@ -12,19 +12,8 @@ import { connect } from 'react-redux';
 import {modificaIDEscolhido} from '../actions/ProblemaActions';
 
 
-import FormCadastroProblema from './FormCadastroProblema';
-import formLogin from './FormLogin';
-import AlterarCadastro from './AlterarCadastro';
-import Perfil from './Perfil';
-import Buscas from './Buscas';
 
-const DismissKeyboard = ({ children }) => (
-  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-    {children}
-  </TouchableWithoutFeedback>
-);
-
-function HomeScreen({ navigation }, props) {
+const ServiceProviderMap = () => {
   const [currentRegion, setCurrentRegion] = useState(null);
   const [Problems, setProblems] = useState([]);
   const [local, setLocal] = useState([]);
@@ -61,17 +50,19 @@ function HomeScreen({ navigation }, props) {
      latitudeDelta: 0.02,
      longitudeDelta: 0.02,
    })
-  }}
+  }
+   
+  }
 
   function LoadIcons(props){
     const icone = props.icone;
     if(icone === "Trânsito"){
       return (<MaterialIcons name="directions-car" size={30} color="black" />)
     }
-    else if(icone === "Saúde"){
+    else if(icone === "Saúde e Vigilancia Sanitária"){
       return (<MaterialIcons name="local-hospital" size={30} color="red" />)
     }
-    else if(icone === "Ambiental") {
+    else if(icone === "Meio Ambiente") {
       return (<EvilIcons name="trash" size={40} color="grey"/>)
     }
     else return(null)
@@ -100,13 +91,6 @@ function HomeScreen({ navigation }, props) {
     
     }
   }
-  
-
-  function list(){
-    Keyboard.dismiss();
-    navigation.openDrawer();
-  }
-
   useEffect(() => {
  
    const a = loadAllProblems();
@@ -149,14 +133,7 @@ function HomeScreen({ navigation }, props) {
   }
 
   return (
-    
     <>
-    <Appbar.Header SafeAreaView={0} statusBarHeight={20} style={{backgroundColor: '#8a2be2'}}>
-        <Appbar.Action icon="menu" onPress={()=> list()} />
-          <Appbar.Content title="REPORTE JÁ" />
-        </Appbar.Header>
-
-      <DismissKeyboard>
       {activityStatus ? <ActivityIndicator animating={activityStatus} color={Colors.red800} />
       :
       <MapView   initialRegion={currentRegion} style={styles.map} region={currentRegion} >
@@ -177,22 +154,11 @@ function HomeScreen({ navigation }, props) {
         </Callout>
         </MapView.Marker>
       ))}
-      
-      
-       
+
       </MapView>
     }
-      
-      
-      </DismissKeyboard>
-      <View style={styles.addForm} >
-        <TouchableOpacity  onPress={() => Actions.formCadastroProblema()} style={styles.addButton}>
-          <Text style={{fontSize:16,fontWeight: 'bold',color: '#FFF'}}>Clique aqui e REPORTE JÁ!</Text>
-        </TouchableOpacity>
-      </View> 
-      
-      
-       <KeyboardAvoidingView style={styles.searchForm} behavior="padding" keyboardVerticalOffset= '20'>
+
+       <View style={styles.searchForm} behavior="padding" keyboardVerticalOffset= '20'>
         <TextInput 
         style={styles.searchInput} 
         placeholder="Pesquisar uma localização..."
@@ -206,78 +172,13 @@ function HomeScreen({ navigation }, props) {
           <MaterialIcons name="my-location" size={20} color="#FFF" />
         </TouchableOpacity>
 
-      </KeyboardAvoidingView>
+      </View>
       </>
   );
 }
 
 
-    
-     
-
-const Drawer = createDrawerNavigator();
-
-export const App = (props) =>   {
-  return (
-    
-    <NavigationContainer>
-      <Drawer.Navigator 
-      initialRouteName="Home" 
-      drawerStyle={{backgroundColor: '#4b0082'}} 
-      drawerContentOptions={{contentContainerStyle:{marginTop: 10}, activeTintColor: '#8a2be2', 
-                            inactiveTintColor: '#8a2be2', inactiveBackgroundColor: '#d3d3d3', 
-                            activeBackgroundColor: '#d3d3d3',  itemStyle: { marginTop: 20 }, 
-                            labelStyle: {fontSize: 25}
-      }} 
-      >
-         
-         <Drawer.Screen name={props.nome} component={HomeScreen} 
-        options={{
-        
-          drawerIcon: config => <Image source={require('../imgs/empty.jpg')} 
-                                  style={{ height: 40, width: 50, paddingTop: 60, borderRadius: 100}}
-                                />
-        }}/>
-
-        <Drawer.Screen name="Perfil" component={Perfil} 
-        options={{
-        
-          drawerIcon: config => <MaterialIcons name="comment" size={20} color="#8a2be2" />
-        }}/>
-
-        <Drawer.Screen name="Reporte Já" component={FormCadastroProblema}  
-                options={{
-                  drawerIcon: config => <MaterialIcons name="room" size={20} color="#8a2be2" />
-                }}/>
-
-        <Drawer.Screen name="Buscar" component={Buscas} 
-                options={{
-                
-                  drawerIcon: config => <MaterialIcons name="search" size={20} color="#8a2be2" />
-                }}/>      
-
-        <Drawer.Screen name="Alterar Cadastro" component={AlterarCadastro} 
-                options={{
-                  drawerIcon: config => <MaterialIcons name="contact-mail" size={20} color="#8a2be2" />
-                }}/>        
-
-        <Drawer.Screen name="Sair" component={formLogin} 
-         options={{
-          drawerIcon: config => <MaterialIcons name="exit-to-app" size={20} color="#8a2be2" />
-        }}/>
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
-}
-
-const mapStateToProps = state =>(
-  {
-    nome: state.AutenticacaoReducer.userNome
-  }
-  
-)
-
-export default connect(mapStateToProps, {modificaIDEscolhido})(App);
+export default ServiceProviderMap;
 
 const styles = StyleSheet.create({
   map: {
@@ -307,7 +208,7 @@ const styles = StyleSheet.create({
   },
   searchForm: {
     position: 'absolute',
-    top: 90,
+    top: 50,
     left: 20,
     right: 20,
     zIndex: 5,
@@ -351,7 +252,7 @@ const styles = StyleSheet.create({
   addForm: {
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     zIndex: 5,
   },
 });

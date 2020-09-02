@@ -74,10 +74,9 @@ const ServiceProviderMain = (props) => {
      }, []);
 
   useEffect(() => {
-    console.log(user.area)
     api.get('/SearchFormBuscas', {
       params: {
-        areaProblema: user.area,
+        areaProblema: user.prestador,
         nomeProblema: '',
         latitude: position.latitude,
         longitude: position.longitude,
@@ -87,13 +86,13 @@ const ServiceProviderMain = (props) => {
       setProblems(response.data)
       
     })
-    console.log(problems)
   },[position]);
 
   const handleAssignService = useCallback(async (userId,problemId) => {
     await api.post('AtribuirProblema', {userId, problemId});
     Alert.alert('Serviço', 'Serviço atribuído com sucesso!')
   }, []);
+
 
   return (
     <View style={styles.container}>
@@ -105,7 +104,7 @@ const ServiceProviderMain = (props) => {
       <View style={styles.title}>
   <Text style={styles.titleText} >Bem-vindo {user.nome} </Text>
       </View>
-      <Text style={styles.titleInfo}>Todos problemas de {user.area} </Text>
+      <Text style={styles.titleInfo}>Todos problemas de {user.prestador} </Text>
     </View>
     <ScrollView>
       {problems.map(problem => (

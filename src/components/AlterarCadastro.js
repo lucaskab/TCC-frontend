@@ -87,7 +87,7 @@ export const AlterarCadastro = (props) =>  {
         <>
         
         <Appbar.Header SafeAreaView={0} statusBarHeight={20}>
-          <Appbar.BackAction onPress={() => Actions.navigation()}/>
+          <Appbar.BackAction onPress={() => Actions.perfil()}/>
           <Appbar.Content title="Alterar cadastro" />
         </Appbar.Header>
       <ImageBackground style={{ width: '100%', height: '100%'}} source={require('../imgs/telafundo2.jpg')}>

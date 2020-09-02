@@ -66,12 +66,12 @@ const ServiceProviderData = (props) => {
   useEffect(() => {
     api.get('searchQTDProblemsByUser', {
       params: {
-        email: props.email
+        idPrestador: user._id
       }
     }).then(response => {
       setQtd(response.data)
     })
-  }, []);
+  }, [data]);
 
   return (
     <View style={styles.container}>
@@ -80,7 +80,7 @@ const ServiceProviderData = (props) => {
       <Appbar.Content title="Seus problemas" />
     </Appbar.Header>
     <View>
-      <Text style={styles.titleInfo}>Você possui um total de: {qtd} problemas </Text>
+      <Text style={styles.titleInfo}>Você possui {qtd} problema(s) </Text>
     </View>
     {problems ? 
       <FlatList 
@@ -163,6 +163,8 @@ const styles = StyleSheet.create({
   titleInfo: {
     paddingHorizontal: 20,
     paddingBottom: 20,
+    marginTop: 20,
+    alignSelf: 'center',
     fontSize: 22,
     fontWeight: 'bold',
     color: '#8a2be2'

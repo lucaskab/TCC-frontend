@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
+import { Text, FlatList, View, StyleSheet, Image, TouchableOpacity, Alert,ScrollView} from 'react-native';
 import Constants from 'expo-constants'
 import Logo from '../assets/logo1.png';
 import {Actions} from "react-native-router-flux";
 import { Feather } from '@expo/vector-icons'
 import { connect } from 'react-redux';
 import api from '../../services/api';
+import {Appbar} from 'react-native-paper';
 import CheckAlert from "react-native-awesome-alert";
 import {modificaIDEscolhido} from '../actions/ProblemaActions';
 
@@ -29,9 +30,10 @@ export const Perfil = (props) =>  {
     async function deletarProblema(id){
 
         const resposta = await api.post('deletarProblema', {id});
-        Alert.alert("Sucesso","O problema foi deletado!!!")
+        Alert.alert("Sucesso","O problema foi deletado!!!");
+        Actions.perfil();
     } 
-      
+      console.log(user._id);
     async function loadProblems(){
         const email = props.email
         const response = await api.get('/searchProblemsByUser',{
@@ -39,7 +41,7 @@ export const Perfil = (props) =>  {
                 email
             }
         })
-        const quantidade = await api.get('/searchQTDProblemsByUser',{
+        const quantidade = await api.get('/searchQTDProblemsByUser1',{
             params: {
                 email
             }
@@ -51,13 +53,11 @@ export const Perfil = (props) =>  {
 
   async function loadUserName(){
         const _id = props.id;
-        console.log(_id);
         const response = await api.get(`/searchUserByID`,{
             params: {
                 _id
             }
         });
-        console.log(response.data);
         setUser(response.data);
     }
 
@@ -69,7 +69,12 @@ useEffect(() => {
 
 
     return (
-        <View style={styles.container}>
+        <>
+        <Appbar.Header SafeAreaView={0} statusBarHeight={20}>
+          <Appbar.BackAction onPress={() => Actions.navigation()}/>
+          <Appbar.Content title="Perfil" />
+        </Appbar.Header>
+        <ScrollView style={styles.container}>
         <View style={styles.header}>
         <Image source={Logo} style={{width: 110, height: 100}} />
         <Text style={styles.headerText}>
@@ -112,9 +117,9 @@ useEffect(() => {
             </View>
             )}
         />
-        </View> 
+        </ScrollView> 
 
-        
+        </>
     )
 }
 
@@ -169,11 +174,14 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     problemList: {
-        marginTop: 25
+        marginTop: 25,
+        marginBottom: 45
     },
     problem: {
         padding: 24,
         borderRadius: 8,
+        borderColor:'#8a2be2',
+        borderWidth: 5,
         backgroundColor: '#FFF',
         marginBottom: 16
     },

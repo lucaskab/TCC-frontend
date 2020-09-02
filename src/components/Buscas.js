@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, ScrollView, Picker} from 'react-native';
 import { Actions} from 'react-native-router-flux'
 import { connect } from 'react-redux';
 import { Appbar, ActivityIndicator, Colors } from 'react-native-paper';
@@ -9,6 +9,8 @@ import { requestPermissionsAsync, getCurrentPositionAsync, geocodeAsync } from '
 import api from '../../services/api';
 import ModalSelector from 'react-native-modal-selector';
 import DialogInput from 'react-native-dialog-input';
+import AreaData from '../data/areaData';
+import Data from '../data/data';
 
 
 import {modificaSearchNome, modificaSearchArea, modificaSearchKM} from '../actions/SearchActions';
@@ -22,8 +24,10 @@ export const Buscas = (props) =>  {
   const [nomeVisible, setNomeVisible] = useState(null);
   const [nomeBusca,setNomeBusca] = useState('');
   const [kmVisible, setKMVisible] = useState(null);
-  const [kmBusca,setKMBusca] = useState(10);
+  const [kmBusca,setKMBusca] = useState(10);                                                            
   const [buscando,setBuscando] = useState(false);
+  const [escolha, setEscolha] = useState();
+  
   
   async function loadProblems1() {
     setBuscando(true);
@@ -89,105 +93,7 @@ export const Buscas = (props) =>  {
     setProblems(resposta.data)
     setBuscando(false);
     }
-  const area = [
-    { key: 0, section: true, label: 'Área do Problema:' },
-    { key: 1, label: 'Todas as opções' },
-    { key: 2, label: 'Saúde' },
-    { key: 3, label: 'Ambiental' },
-    { key: 4, label: 'Trânsito' },
-];
-
-const nome = [[{ key: 9, label: 'Todas as opções' }],
-[{ key: 0, section: true, label: 'Saúde:' },,
-{ key: 1, label: 'Hospital Lotado' },
-{ key: 2, label: 'Foco de Dengue' },],
-
-[{ key: 3, section: true, label: 'Trânsito:' },
-{ key: 4, label: 'Acidente' },
-{ key: 5, label: 'Semáforo Quebrado' },],
-
-[{ key: 6, section: true, label: 'Ambiental:' },
-{ key: 7, label: 'Alagamento' },
-{ key: 8, label: 'Poluição' },]
-
  
-];
-  
-  function NomeModal(){
-    
-    setNomeVisible(true);
-    const vetor1 = nome[0].concat(nome[1]);
-    const vetor2 = nome[0].concat(nome[2]);
-    const vetor3 = nome[0].concat(nome[3])
-    if(areaBusca === "Saúde"){ 
-    return (
-      <View >
-                <ModalSelector visible={nomeVisible}
-                    data={vetor1}
-                    onChange={(nome)=> {setNomeVisible(false), setNomeBusca(nome.label) }} 
-                    onModalClose={(nome)=> {setNomeVisible(false)}}
-                    cancelText = {"Cancelar"}
-                    />
-            </View>
-    )
-    }
-
-    else if(areaBusca === "Trânsito"){ 
-      return (
-        <View >
-                  <ModalSelector visible={nomeVisible}
-                      data={vetor2}
-                      onChange={(nome)=> {setNomeVisible(false), setNomeBusca(nome.label) }} 
-                      onModalClose={(nome)=> {setNomeVisible(false)}}
-                      cancelText = {"Cancelar"}
-                      />
-              </View>
-      )
-      }
-
-      else if(areaBusca === "Ambiental"){ 
-        return (
-          <View >
-                    <ModalSelector visible={nomeVisible}
-                        data={vetor3}
-                        onChange={(nome)=> {setNomeVisible(false), setNomeBusca(nome.label) }} 
-                        onModalClose={(nome)=> {setNomeVisible(false)}}
-                        cancelText = {"Cancelar"}
-                        />
-                </View>
-        )
-        }
-        
-        
-        else {
-          const todos = nome[0].concat(nome[1],nome[2],nome[3]);
-          return (<View >
-                    <ModalSelector visible={nomeVisible}
-                        data={todos}
-                        onChange={(nome)=> {setNomeVisible(false), setNomeBusca(nome.label) }} 
-                        onModalClose={(nome)=> {setNomeVisible(false)}} 
-                        cancelText = {"Cancelar"}
-                        />
-                </View>)
-        }
-  }
-  function AreaModal(){
-    setAreaVisible(true);
-
-      return (
-        < >
-                  <ModalSelector visible={areaVisible}
-                      data={area}
-                      onChange={(area)=> {setAreaVisible(false), setAreaBusca(area.label) }} 
-                      onModalClose={(nome)=> {setAreaVisible(false)}}
-                      cancelText = {"Cancelar"}
-                      />
-  
-              </>
-      )
-    
-   
-  }
   function KmModal(){
     setKMVisible(true);
 
@@ -203,6 +109,229 @@ const nome = [[{ key: 9, label: 'Todas as opções' }],
       </>
     )
   }
+
+  function NomeProblema(){
+    if(escolha === "Acessibilidade"){
+        return(
+            <Picker
+            style={{width: 210, height:25 }}
+            onValueChange={value => setNomeBusca(value)}
+            >
+            {Data.Acessibilidade.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+          </Picker>
+        )
+    }
+    if(escolha === "Animais"){
+        return(
+            <Picker
+            style={{width: 250, height:3,position: 'absolute' }}
+            onValueChange={value => setNomeBusca(value)}
+            >
+              {Data.Animais.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+          </Picker>
+        )
+    }
+    if(escolha === "Assistência Social"){
+      return(
+          <Picker
+          style={{width: 250, height:3,position: 'absolute' }}
+          onValueChange={value => setNomeBusca(value)}
+          >
+            {Data.Assistência_Social.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+
+        </Picker>
+      )
+  }
+  if(escolha === "Comércio e Serviço"){
+    return(
+        <Picker
+        style={{width: 250, height:3,position: 'absolute' }}
+        onValueChange={value => setNomeBusca(value)}
+        >
+          {Data.Comércio_e_Serviço.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+
+      </Picker>
+    )
+}
+if(escolha === "Conservação Urbana"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Conservação_Urbana.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Cultura, Lazer e Turismo"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Cultura_Lazer_Turismo.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Defesa Civil"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Defesa_Civil.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Documentos e Processos"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Documentos_Processos.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Educação"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Educação.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Limpeza Urbana"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Limpeza_Urbana.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Meio Ambiente"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Meio_Ambiente.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Obras, Estruturas e Imóveis"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Obras_Estruturas_Imóveis.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Ordem Pública"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Ordem_Pública.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Saúde e Vigilancia Sanitária"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Saúde_Vigilancia_Sanitária.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Serviços Funerários"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Serviços_Funerários.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Trânsito"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Trânsito.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+if(escolha === "Transporte"){
+  return(
+      <Picker
+      style={{width: 250, height:3,position: 'absolute' }}
+      onValueChange={value => setNomeBusca(value)}
+      >
+        {Data.Transporte.map(item => {
+            return (<Picker.Item label={item} value={item} />)
+          })} 
+
+    </Picker>
+  )
+}
+}
+
   async function loadAllProblems() {
     
     const resposta = await api.get('/searchAllProblems')
@@ -262,22 +391,35 @@ function showProblemInfo(id){
       </>
       : null}
       </MapView>
-      
+      <View style={{flexDirection:"column", backgroundColor: 'red'}}>
       {areaVisible ? <AreaModal /> : null }
       {nomeVisible ? <NomeModal /> : null }
       {kmVisible ? <KmModal /> : null }
+      </View>
       
-      <Text style={{ position:'absolute', left: 5, fontSize: 15, fontWeight: 'bold', marginBottom: 10, top: 80}}>Área:{areaBusca}, Nome: {nomeBusca}, Distância: {kmBusca} KM</Text>
+      <Text style={{position: 'absolute', left: 5, fontSize: 15, fontWeight: 'bold', marginBottom: 10, top: 80}}>Área:{areaBusca}</Text>
+      <Text style={{position: 'absolute', left: 5, fontSize: 15, fontWeight: 'bold', marginBottom: 10, top: 100 }}>Nome: {nomeBusca}, </Text>
+      <Text style={{position: 'absolute', left: 5, fontSize: 15, fontWeight: 'bold', marginBottom: 10, top: 120}}>Distância: {kmBusca} KM</Text>
       <View style={styles.searchForm}> 
       <ScrollView  horizontal={true} showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity  onPress={() => AreaModal()} style={styles.loadButton}>
-          <Text style={{color: 'white'}}>Área</Text>
-        </TouchableOpacity>
+      <View style={styles.loadButton}>
+      <Text style={{color: 'white', alignSelf:"center"}}>Área</Text>
+        <Picker
+            style={{width: 250, height:3,position: 'absolute' }}
+            selectedValue={escolha}
+            onValueChange={item => {setAreaBusca(item), setEscolha(item), setNomeBusca("")} }
+        >
+          {AreaData.map(item => {
+              return (<Picker.Item label={item} value={item} />)
+            })} 
+        </Picker>
+          
+        </View>
 
-        <TouchableOpacity  onPress={() => NomeModal()} style={styles.loadButton}>
-          <Text style={{color: 'white'}}>Nome</Text>
-        </TouchableOpacity>
-
+        <View style={styles.loadButton}>
+      <Text style={{color: 'white', alignSelf:"center"}}>Nome</Text>
+            {escolha ? <NomeProblema /> : null}
+        </View>
         <TouchableOpacity  onPress={() => KmModal()} style={styles.loadButton}>
           <Text style={{color: 'white'}}>Distância</Text>
         </TouchableOpacity>
@@ -310,7 +452,7 @@ const styles = StyleSheet.create({
   },
   searchForm: {
     position: 'absolute',
-    top: 110,
+    bottom: 50,
     left: 3,
     right: 5,
     zIndex: 5,
@@ -334,7 +476,7 @@ const styles = StyleSheet.create({
   },
   loadButton: {
     width: 65,
-    height: 30,
+    height: 60,
     backgroundColor: '#8E4Dff',
     borderRadius: 25,
     justifyContent: 'center',
@@ -343,7 +485,7 @@ const styles = StyleSheet.create({
   },
   callout: {
     width: 200,
-    height: 150
+    height: 150,
   },
   user:{
     fontWeight: 'bold',
@@ -355,5 +497,12 @@ const styles = StyleSheet.create({
   },
   data: {
     marginTop: 5
+  },
+  picker: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingBottom: 10,
+    borderRadius: 8,
+    
   },
 });

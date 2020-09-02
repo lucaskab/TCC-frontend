@@ -1,5 +1,5 @@
 import React, { Component ,useState, useEffect} from "react";
-import { StyleSheet, Image, ScrollView, Picker, TextInput,Alert, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, TouchableOpacity } from "react-native";
+import { StyleSheet, Image, ScrollView, Picker, TextInput,Alert, Keyboard, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Actions} from 'react-native-router-flux'
 import {  View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Button, Input, Icon } from 'native-base';
 import { connect } from 'react-redux';
@@ -39,6 +39,7 @@ const IndicatorStyles = {
     const [local, setLocal] = useState([]);
     const [busca,setBusca] = useState('');
     const [checked, setChecked] = useState('first');
+    const [activityI, setActivityI] = useState(false);
     
     async function LoadAddress(){
 
@@ -75,7 +76,9 @@ const IndicatorStyles = {
        } }
 
     async function cadastrarProblems(email, nomeProblema, Descricao, areaProblema, latitude, longitude, sugestao){
+      setActivityI(true);
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
+
       const urlFoto =  [];
       for(var i = 0; i <5; i++){
       var index = arrayDeURL[i].lastIndexOf("/") + 1;
@@ -93,11 +96,15 @@ const IndicatorStyles = {
 
       const result = await api.post('/pictureToServer',form, headers);
 
-      urlFoto[i] = result.data.url;
-    }
 
+      urlFoto[i] = filename;
+    }
+      
       await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema, latitude, longitude, sugestao})
+      setActivityI(false);
       Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
+      props.modificaDescricao("");
+      props.modificaSugestao("");
       Actions.reset('navigation');
     
     }
@@ -171,7 +178,7 @@ function NomeProblema(){
     if(escolha === "Acessibilidade"){
         return(
             <Picker
-            style={{ backgroundColor: "#DCDCDC", width: 210, height:25 }}
+            style={{width: 210, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
             >
@@ -184,7 +191,7 @@ function NomeProblema(){
     if(escolha === "Animais"){
         return(
             <Picker
-            style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+            style={{width: 220, height:25 }}
             selectedValue={nomeProblema}
             onValueChange={value => setNomeProblema(value)}
             >
@@ -197,7 +204,7 @@ function NomeProblema(){
     if(escolha === "Assistência Social"){
       return(
           <Picker
-          style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+          style={{width: 220, height:25 }}
           selectedValue={nomeProblema}
           onValueChange={value => setNomeProblema(value)}
           >
@@ -211,7 +218,7 @@ function NomeProblema(){
   if(escolha === "Comércio e Serviço"){
     return(
         <Picker
-        style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+        style={{width: 220, height:25 }}
         selectedValue={nomeProblema}
         onValueChange={value => setNomeProblema(value)}
         >
@@ -225,7 +232,7 @@ function NomeProblema(){
 if(escolha === "Conservação Urbana"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -239,7 +246,7 @@ if(escolha === "Conservação Urbana"){
 if(escolha === "Cultura, Lazer e Turismo"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -253,7 +260,7 @@ if(escolha === "Cultura, Lazer e Turismo"){
 if(escolha === "Defesa Civil"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -267,7 +274,7 @@ if(escolha === "Defesa Civil"){
 if(escolha === "Documentos e Processos"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -281,7 +288,7 @@ if(escolha === "Documentos e Processos"){
 if(escolha === "Educação"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -295,7 +302,7 @@ if(escolha === "Educação"){
 if(escolha === "Limpeza Urbana"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -309,7 +316,7 @@ if(escolha === "Limpeza Urbana"){
 if(escolha === "Meio Ambiente"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -323,7 +330,7 @@ if(escolha === "Meio Ambiente"){
 if(escolha === "Obras, Estruturas e Imóveis"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -337,7 +344,7 @@ if(escolha === "Obras, Estruturas e Imóveis"){
 if(escolha === "Ordem Pública"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -351,7 +358,7 @@ if(escolha === "Ordem Pública"){
 if(escolha === "Saúde e Vigilancia Sanitária"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -365,7 +372,7 @@ if(escolha === "Saúde e Vigilancia Sanitária"){
 if(escolha === "Serviços Funerários"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -379,7 +386,7 @@ if(escolha === "Serviços Funerários"){
 if(escolha === "Trânsito"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -393,7 +400,7 @@ if(escolha === "Trânsito"){
 if(escolha === "Transporte"){
   return(
       <Picker
-      style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+      style={{width: 220, height:25 }}
       selectedValue={nomeProblema}
       onValueChange={value => setNomeProblema(value)}
       >
@@ -428,16 +435,16 @@ function SwipeEsquerda(){
     
     <Appbar.Header SafeAreaView={0} statusBarHeight={20} style={{backgroundColor: '#8a2be2'}}>
         <Appbar.BackAction onPress={() => Actions.formCadastroProblema()} />  
-        <Appbar.Content title="Enviar" />
+        <Appbar.Content title="Reporte aqui o seu Problema" />
     </Appbar.Header>
 
 
 
     <ScrollView style={styles.container} >
     <View style={styles.picker}>
-      <Text style={styles.text}>{'Área do Problema:'}</Text>
+      <Text style={styles.text}>{'Área:'}</Text>
         <Picker
-            style={{ backgroundColor: "#DCDCDC", width: 220, height:25 }}
+            style={{width: 220, height:25 }}
             selectedValue={escolha}
             onValueChange={value => setEscolha(value) , value => setEscolha(value) 
             }
@@ -448,7 +455,7 @@ function SwipeEsquerda(){
         </Picker>
     </View> 
     <View style={styles.picker}>
-            <Text style={styles.text}>{'Nome do Problema:'}</Text>
+            <Text style={styles.text}>{'Nome:'}</Text>
                 <NomeProblema />
     </View>      
                 <Text style={styles.text}>{'Descrição:'}</Text>      
@@ -457,7 +464,7 @@ function SwipeEsquerda(){
                       style={styles.textArea}
                       underlineColorAndroid="transparent"
                       placeholder="Descreva detalhadamente o problema."
-                      placeholderTextColor="grey"
+                      placeholderTextColor="black"
                       numberOfLines={10}
                       multiline={true}
                       value={props.descricao}
@@ -471,7 +478,7 @@ function SwipeEsquerda(){
                       style={styles.textArea}
                       underlineColorAndroid="transparent"
                       placeholder="Deixe aqui sua sugestão para a solução deste problema: (Opcional)"
-                      placeholderTextColor="grey"
+                      placeholderTextColor="black"
                       numberOfLines={10}
                       multiline={true}
                       value={props.sugestao}
@@ -561,10 +568,12 @@ function SwipeEsquerda(){
               </>
       )}
 
-
-        <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:10, marginBottom:35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
-        <Text >Enviar Problema</Text>
-        </Button>
+        {activityI ? <ActivityIndicator size="small" color="#0000ff" style={{marginBottom: 30}}/> :
+          <Button  onPress={() => cadastrarProblems(props.email, nomeProblema, props.Descricao, escolha, currentRegion.latitude, currentRegion.longitude, props.sugestao)} style={{ marginTop:10, marginBottom:35, backgroundColor: '#8a2be2', justifyContent: 'center'}} >
+          <Text >Enviar Problema</Text>
+          </Button>
+        }    
+        
       
   </ScrollView>
   </>
@@ -595,11 +604,11 @@ const styles = StyleSheet.create({
     flex:1,
     paddingHorizontal: 10,
     paddingTop: 10,
-    backgroundColor: '#DCDCDC'
+    backgroundColor: '#FFF'
   },
   picker: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     paddingBottom: 10,
     borderRadius: 8,
     
@@ -615,7 +624,12 @@ const styles = StyleSheet.create({
     borderWidth: 0.9,
     borderRadius: 8,
     padding: 10,
-    height: 130
+    height: 130,
+    shadowColor: '#470000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.5,
+    elevation: 2
+    
   },
   textArea: {
     height: 130,
