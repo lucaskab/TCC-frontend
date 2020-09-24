@@ -77,7 +77,6 @@ useEffect(() => {
   loadProblem();
 }, []);
 
-
 const changeProblemStatus = useCallback(async(status) => {
     await api.post('/changeProblemStatus', {
         status,
@@ -112,28 +111,42 @@ const changeProblemStatus = useCallback(async(status) => {
               <Text style={styles.title}>Informação completa</Text>
           </View>
       <View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Área:</Text>
           <Text style={styles.info}>{problem.areaProblema}</Text>
+          </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Nome:</Text>
           <Text style={styles.info}>{problem.nomeProblema}</Text>
+          </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Endereço:</Text>
           <Text style={styles.info}>{address.rua}, {address.numero}, {address.cidade}, {address.estado}, {address.pais}</Text>
+          </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Descrição:</Text>
           <Text style={styles.info}>{problem.descricaoProblema}</Text>
+          </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Sugestão:</Text>
           <Text style={styles.info}>{problem.sugestao}</Text>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={styles.description}>Status:</Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center',   borderRadius: 8,borderColor:'#8a2be2',borderWidth: 3}}>
+            <Text style={styles.description}> Status:</Text>
             <Text style={styles.info1}>  {statusProblem}</Text>
             <View style={handleCircleColor(statusProblem)}></View>
           </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Criado por:</Text>
           <Text style={styles.info}>{problem.email}</Text>
+          </View>
+          <View style={styles.borda}>
           <Text style={styles.description}>Criado em:</Text>
           <Text style={styles.info}>{date}</Text>
+          </View>
       </View>
         {changeStatus === 1 ?      
-         <View>
+         <View style={styles.borda}>
             <Text style={styles.description}>
               Alterar status para:
             </Text>
@@ -157,9 +170,11 @@ const changeProblemStatus = useCallback(async(status) => {
         </View>
         : null        
         }
-         <ScrollView style={{flexDirection: 'row', marginTop: 30, marginBottom: 80}} horizontal={true} showsHorizontalScrollIndicator={false} >
+         <ScrollView style={{backgroundColor: "#DCDCDC",flexDirection: 'row', marginTop: 30, marginBottom: 80, borderRadius: 8,borderColor:'#8a2be2',borderWidth: 5, paddingleft: 15, paddingRight: 15}} horizontal={true} showsHorizontalScrollIndicator={false} >
           {photoName.map(uri => (
-            <Image style={{width: 150, height: 150, marginRight: 10}} source={{uri: `https://291cbbc65740.ngrok.io/files/${uri}`}}></Image> 
+            <TouchableOpacity onPress={()=> Actions.fullPicture({uri})}>
+              <Image resizeMode="contain" style={{width: 100, height: 100, marginRight: 10}} source={{uri: `https://dc4a7874d0f7.ngrok.io/files/${uri}`}}></Image> 
+            </TouchableOpacity>
           ))} 
           </ScrollView> 
                
@@ -215,4 +230,11 @@ info1: {
   marginBottom: 10,
   marginTop: 10,
 },
+borda: {
+  borderRadius: 8,
+  borderColor:'#8a2be2',
+  borderWidth: 3,
+  marginVertical: 7,
+  padding: 5
+}
 }); 

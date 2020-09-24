@@ -13,9 +13,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import api from '../../services/api';
 import { connect } from 'react-redux';
+import { Appbar } from 'react-native-paper';
 
 const ServiceProviderCharts = (props) => {
   const [problems, setProblems] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
+  const [allProblems, setAllProblems] = useState([0,0,0,0,0,0,0,0,0,0,0,0]);
   const [selectedDate1, setSelectedDate1] = useState(new Date());
   const [selectedDate2, setSelectedDate2] = useState(new Date());
   const [showDatePicker1, setShowDatePicker1] = useState(false);
@@ -32,7 +34,8 @@ const ServiceProviderCharts = (props) => {
 
   useEffect(() => {
     const email = props.email;
-    api.post('userscadastrados', {email}).then(response => {
+    const senha = props.senha;
+    api.post('userscadastrados', {email, senha}).then(response => {
       setUser(response.data);
     })} , []);
 
@@ -54,35 +57,46 @@ const ServiceProviderCharts = (props) => {
     setProblems(finalArray);
   },[problems]);
 
-  const handleDateChanged1 = useCallback(
-    (event,date) => {
-      if (Platform.OS === 'android') {
-        setShowDatePicker1(false);
-      }
-      if (date) {
-        setSelectedDate1(date);
-      }
-    },
-    [],
-  );
+  const handleSearchAll = useCallback(async () => {
+    const response1 = await api.get('/searchAllProblems');
+    const filter1 = response1.data;
+    var dateArray1 = [];
+    var finalArray1 = [0,0,0,0,0,0,0,0,0,0,0,0];
+    filter1.map(problem => {
+      dateArray1.push(problem.CreatedAt);
+    });
+    for(var i=0; i<dateArray1.length; i++) {
+      var year = dateArray1[i].slice(0,4);
+      var month = dateArray1[i].slice(5,7);
+      var day = dateArray1[i].slice(8,10);
+      var date = getMonth(new Date(year,month,day));
+      finalArray1[date-1] += 1;
+    }
+    setAllProblems(finalArray1);
+  },[allProblems]);
 
-  const handleDateChanged2 = useCallback(
-    (event,date) => {
-      if (Platform.OS === 'android') {
-        setShowDatePicker2(false);
-      }
-      if (date) {
-        setSelectedDate2(date);
-      }
-    },
-    [],
-  );
+  function handleCharts() {
+    handleSearchAll();
+    handleSearch();
+  }
+
+  
   return (
     <Animated.View>
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} >
-  <Text>
-    Bezier Line Chart
-  </Text>
+      <Appbar.Header SafeAreaView={0} statusBarHeight={20} style={{backgroundColor: '#8a2be2'}}>
+      <Appbar.Action />
+        <Appbar.Content title="Informações" />
+        <Appbar.Action icon="arrow-right" onPress={handleCharts} />
+      </Appbar.Header>
+      <ScrollView>
+
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <Text style={{fontSize: 20, fontWeight: "bold", color:'#8a2be2', marginTop: 30, marginLeft: 40}}>
+        Quantidade de problemas de {user.prestador} em 2020 
+      </Text>
+      </View>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{margin: 10}} >
+
 
   <LineChart
     data={{
@@ -91,7 +105,37 @@ const ServiceProviderCharts = (props) => {
         data: problems        
         }]
     }}
-    width={700} // from react-native
+    width={750} // from react-native
+    height={220}
+    chartConfig={{
+      backgroundColor: '#e26a00',
+      backgroundGradientFrom: '#fb8c00',
+      backgroundGradientTo: '#ffa726',
+      decimalPlaces: 2, // optional, defaults to 2dp
+      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+      style: {
+        borderRadius: 16,
+        
+      }
+    }}
+    bezier
+    style={{
+      marginVertical: 8,
+      borderRadius: 16,
+    }}
+  />
+
+</ScrollView>
+  <Text style={{fontSize: 20, fontWeight: "bold", color:'#8a2be2', alignSelf: 'center'}}>Quantidade de problemas em 2020 </Text>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{margin: 10}} >
+
+
+  <LineChart
+    data={{
+      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+      datasets: [{ data: allProblems}]
+    }}
+    width={750} // from react-native
     height={220}
     chartConfig={{
       backgroundColor: '#e26a00',
@@ -111,20 +155,9 @@ const ServiceProviderCharts = (props) => {
   />
 
 </ScrollView>
-<TouchableOpacity onPress={handleToggleDatePicker1}>
-  <Text>Abrir calendario</Text>
-  {showDatePicker1 && (
-  <DateTimePicker mode="date" display="calendar" value={selectedDate1} onChange={handleDateChanged1} textColor="#f4ede8"/>
-  )}
-</TouchableOpacity>
-
-<TouchableOpacity onPress={handleToggleDatePicker2}>
-  <Text>Abrir calendario2</Text>
-  {showDatePicker2 && (
-  <DateTimePicker mode="date" display="calendar" value={selectedDate2} onChange={handleDateChanged2} textColor="#f4ede8"/>
-  )}
-</TouchableOpacity>
-<Button title="Procurar" onPress={handleSearch}/>
+<View style={{marginBottom: 90, width: "100%", justifyContent: 'center', flexDirection:'row'}}>
+</View>
+</ScrollView>
 </Animated.View>
   )
 }
@@ -132,6 +165,7 @@ const ServiceProviderCharts = (props) => {
 const mapStateToProps = state =>(
   {
     email: state.AutenticacaoReducer.emailLogin,
+    senha: state.AutenticacaoReducer.senhaLogin,
   }
 );
 

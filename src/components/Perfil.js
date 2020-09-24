@@ -33,7 +33,6 @@ export const Perfil = (props) =>  {
         Alert.alert("Sucesso","O problema foi deletado!!!");
         Actions.perfil();
     } 
-      console.log(user._id);
     async function loadProblems(){
         const email = props.email
         const response = await api.get('/searchProblemsByUser',{

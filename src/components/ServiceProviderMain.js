@@ -45,7 +45,8 @@ const ServiceProviderMain = (props) => {
 
   useEffect(() => {
     const email = props.email;
-    api.post('userscadastrados', {email}).then(response => {
+    const senha = props.senha;
+    api.post('userscadastrados', {email,senha}).then(response => {
       setUser(response.data)
     })} , []);
 
@@ -90,6 +91,7 @@ const ServiceProviderMain = (props) => {
 
   const handleAssignService = useCallback(async (userId,problemId) => {
     await api.post('AtribuirProblema', {userId, problemId});
+    Actions.tab();
     Alert.alert('Serviço', 'Serviço atribuído com sucesso!')
   }, []);
 
@@ -148,6 +150,7 @@ const ServiceProviderMain = (props) => {
  const mapStateToProps = state =>(
   {
     email: state.AutenticacaoReducer.emailLogin,
+    senha: state.AutenticacaoReducer.senhaLogin,
   }
 );
 
@@ -196,6 +199,7 @@ const styles = StyleSheet.create({
   status: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: 250,
   },
   button: {
     fontSize: 16,

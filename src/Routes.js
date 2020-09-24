@@ -12,6 +12,7 @@ import Buscas from './components/Buscas';
 import Foto from './components/Foto';
 import ProblemInfo from './components/ProblemInfo';
 import Tab from './components/MyTabs';
+import FullPicture from './components/FullPicture';
 
 
 export default props => (
@@ -29,6 +30,7 @@ export default props => (
         <Scene key='navigation' component={Navigation} hideNavBar /> 
         <Scene key='formCadastro' component={FormCadastro} hideNavBar/>
         <Stack key='problemInfo' component={ProblemInfo} hideNavBar />
+        <Scene key='fullPicture' component={FullPicture} hideNavBar/>
 
         </Stack>
     </Router>  

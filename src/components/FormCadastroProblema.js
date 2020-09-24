@@ -12,10 +12,6 @@ import FitImage from 'react-native-fit-image';
 
 import Lightbox from 'react-native-lightbox';
 
-
-
-
-
 export const FormCadastroProblema = (props) => {
   const [Imagem, setImagem] = useState([], []);
   const [Counter, setCounter] = useState(1);

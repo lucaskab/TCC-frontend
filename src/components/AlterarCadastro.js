@@ -21,6 +21,7 @@ export const AlterarCadastro = (props) =>  {
       let { nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular, rg } = props    
         var email = props.email1;
 
+
       if(nome == ""){
         nome = Usuario.nome;
       }
@@ -64,14 +65,9 @@ export const AlterarCadastro = (props) =>  {
     }
 
     async function fetchFonts () {
-        const retorno = await Font.loadAsync({
-          'adventpro-regular': require('../../assets/fonts/adventpro-regular.ttf'),
-          'Roboto-Regular': require('../../assets/fonts/Roboto-Regular.ttf'),
-          'Roboto-Medium': require('../../assets/fonts/Roboto-Medium.ttf')
-
-          })
-        var email = props.email
-        const resposta = await api.post('/userscadastrados', {email}) 
+        var email = props.email;
+        var senha = props.senha;
+        const resposta = await api.post('/userscadastrados', {email,senha}) 
         setUsuario(resposta.data);
        setDataLoaded(true);  
       }
@@ -243,7 +239,8 @@ const mapStateToProps = state =>(
       rg: state.AlteraCadastroReducer.RGAlteraCadastro,
       email1: state.AlteraCadastroReducer.emailAlteraCadastro,
     
-      email: state.AutenticacaoReducer.emailLogin
+      email: state.AutenticacaoReducer.emailLogin,
+      senha: state.AutenticacaoReducer.senhaLogin,
     }
     
   )

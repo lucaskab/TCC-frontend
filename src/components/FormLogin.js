@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView,TextInput } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, Image, ScrollView,TextInput, Alert } from "react-native";
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { modificaEmail1, modificaSenha1, modificaUserID, modificaUserNome } from '../actions/AutenticacaoActions';
@@ -14,12 +14,13 @@ const formLogin = props=>{
   
     var msg = {email, senha};
     const resposta = await api.post('/userscadastrados', msg);
-    props.modificaUserID(resposta.data._id)
-    props.modificaUserNome(resposta.data.nome);
-    if(resposta.data === null){
-      alert("Usuário não encontrado");
+    if(!resposta.data){
+      Alert.alert("Erro","Usuário e senha não coincidem!");
     }
+
     else {
+      props.modificaUserID(resposta.data._id)
+      props.modificaUserNome(resposta.data.nome);
       if(resposta.data.prestador){
         Actions.tab();
       }

@@ -9,14 +9,11 @@ export const Foto =(props)=>{
     return (
       <View style={{flex: 1, backgroundColor:'black', justifyContent: 'center', alignItems: 'center'}}>
       <TouchableOpacity onPress={()=> Actions.formCadastroProblema()}>
-      <Text style={{color:'red'}} >AAAAAAAAAAAAAAAA</Text>
-      <Text style={{color:'red'}}>AAAAAAAAAAAAAAAA</Text>
-      <Text style={{color:'red'}}>AAAAAAAAAAAAAAAA</Text>
-      <Text style={{color:'red'}}>AAAAAAAAAAAAAAAA</Text>
       </TouchableOpacity>
       <Image
         style={{ height: 500 , width: '100%'}}
         source={{ uri: props.foto }}
+        resizeMode="contain"
       />
     </View>
     )

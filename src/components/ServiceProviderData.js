@@ -46,7 +46,8 @@ const ServiceProviderData = (props) => {
 
   useEffect(() => {
     const email = props.email;
-    api.post('userscadastrados', {email}).then(response => {
+    const senha = props.senha;
+    api.post('userscadastrados', {email,senha}).then(response => {
       setUser(response.data),
       setData(5)
     })} , []);
@@ -122,6 +123,7 @@ const ServiceProviderData = (props) => {
  const mapStateToProps = state =>(
   {
     email: state.AutenticacaoReducer.emailLogin,
+    senha: state.AutenticacaoReducer.senhaLogin,
   }
 );
 
