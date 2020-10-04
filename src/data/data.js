@@ -1,4 +1,4 @@
-const data = {
+var data = {
     Acessibilidade: ["Acessibilidade digital","Atendimento médico","Atendimento para pessoas com deficiência","Estacionamento","Fonoaudiologia","Gratuidade de transporte","Outros"],
     Animais: ["Abelhas","Animais Silvestres","Danos à Fauna","Defesa dos animais","Dengue","Vetores","Zoonoses","Outros"],
     Assistência_Social: ["Abrigos", "Atendimento Social", "Gratuidade de transporte", "Vítimas de Violência","Outros"],
@@ -14,9 +14,8 @@ const data = {
     Ordem_Pública:["Atendimento ao cidadão","Auxílio à população","Auxílio Interno","Comércio Ambulante","Estacionamento Irregular","Feiras","Mobiliário urbano","Ocupação de área pública","Poluição Sonora","Postura Municipal","Superintendência","Outros"],
     Saúde_Vigilancia_Sanitária:["Assistência Farmacêutica","Atendimento - Coronavírus","Atendimento em Unidades de Saúde","Atendimento Médico","Caderneta de Saúde","Cursos","Dengue","Engenharia Sanitária","Banco de Leite Materno","Medicina Veterinária","Programas de Saúde","Reabilitação Física","Reabilitação Visual","Vetores","Zoonoses","Outros"],
     Serviços_Funerários:["Cemitérios e Serviços Funerários","Outros"],
-    Trânsito:["Acidentes com veículos e equipamentos","Engenharia de tráfego","Estacionamento Irregular","Fiscalização Eletrônica","Multa de Trânsito","Pavimentação","Regulamentações Viárias","Remoção de carcaça de veículos","Semáforo","Sinalização Gráfica","Vias públicas","Outros","Outros"],
+    Trânsito:["Acidentes com veículos e equipamentos","Engenharia de tráfego","Estacionamento Irregular","Fiscalização Eletrônica","Multa de Trânsito","Pavimentação","Regulamentações Viárias","Remoção de carcaça de veículos","Semáforo","Sinalização Gráfica","Vias públicas","Outros"],
     Transporte:["Ciclovias","Fiscalização de instalações mecânicas","Gratuidade de transporte","Ônibus","Taxis","Transporte Especial","Vistoria Anual","Outros"],
-
 }
 
 export default data;

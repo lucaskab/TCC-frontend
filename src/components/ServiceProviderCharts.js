@@ -91,7 +91,7 @@ const ServiceProviderCharts = (props) => {
       <ScrollView>
 
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-      <Text style={{fontSize: 20, fontWeight: "bold", color:'#8a2be2', marginTop: 30, marginLeft: 40}}>
+      <Text style={{fontSize: 20, fontWeight: "bold", color:'#8a2be2', marginTop: 30, textAlign:'center',}}>
         Quantidade de problemas de {user.prestador} em 2020 
       </Text>
       </View>
@@ -108,9 +108,8 @@ const ServiceProviderCharts = (props) => {
     width={750} // from react-native
     height={220}
     chartConfig={{
-      backgroundColor: '#e26a00',
-      backgroundGradientFrom: '#fb8c00',
-      backgroundGradientTo: '#ffa726',
+      backgroundGradientFrom: '#8a2be2',
+      backgroundGradientTo: '#8a2be2',
       decimalPlaces: 2, // optional, defaults to 2dp
       color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
       style: {
@@ -138,9 +137,8 @@ const ServiceProviderCharts = (props) => {
     width={750} // from react-native
     height={220}
     chartConfig={{
-      backgroundColor: '#e26a00',
-      backgroundGradientFrom: '#fb8c00',
-      backgroundGradientTo: '#ffa726',
+      backgroundGradientFrom: '#8a2be2',
+      backgroundGradientTo: '#8a2be2',
       decimalPlaces: 2, // optional, defaults to 2dp
       color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
       style: {

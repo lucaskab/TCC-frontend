@@ -88,6 +88,7 @@ const changeProblemStatus = useCallback(async(status) => {
         Actions.tab()
     } else if( status === "Finalizado") {
         setStatusProblem("Finalizado");
+        await api.post('/changeIdPrestador', {id: problemId}); 
         Alert.alert("Sucesso","Status atualizado com sucesso!!!");
         Actions.tab();
     }

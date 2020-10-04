@@ -59,7 +59,8 @@ const ServiceProviderData = (props) => {
         idPrestador: user._id,
       }
     }).then(response => {
-      setProblems(response.data)
+      //const problemsNotSolved = response.data.filter((problem) => problem.status != 'Finalizado' );
+      setProblems(response.data);
     })
 
   },[data]);
@@ -79,6 +80,7 @@ const ServiceProviderData = (props) => {
     <Appbar.Header SafeAreaView={0} statusBarHeight={20}>
       <Appbar.BackAction onPress={() => Actions.reset('formLogin')}/>
       <Appbar.Content title="Seus problemas" />
+      <Appbar.Action icon="arrow-left" onPress={()=> Actions.tab()} />
     </Appbar.Header>
     <View>
       <Text style={styles.titleInfo}>Você possui {qtd} problema(s) </Text>
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   problem: {
-    padding: 24,
+    padding: 28,
     borderRadius: 8,
     borderColor: '#269846',
     backgroundColor: '#FFF',

@@ -84,7 +84,7 @@ const ServiceProviderMain = (props) => {
         kmBusca: 10 * 1000
       }
     }).then(response => {
-      setProblems(response.data)
+      setProblems(response.data);
       
     })
   },[position]);
@@ -106,7 +106,7 @@ const ServiceProviderMain = (props) => {
       <View style={styles.title}>
   <Text style={styles.titleText} >Bem-vindo {user.nome} </Text>
       </View>
-      <Text style={styles.titleInfo}>Todos problemas de {user.prestador} </Text>
+      <Text style={styles.titleInfo}>Todos problemas não al de {user.prestador} </Text>
     </View>
     <ScrollView>
       {problems.map(problem => (
@@ -118,7 +118,7 @@ const ServiceProviderMain = (props) => {
 <Text style={styles.descriptions}>Nome: </Text>
 <Text style={styles.info}>{problem.nomeProblema}</Text>
 {problem.idPrestador === "Em análise" ? 
-  <TouchableOpacity onPress={() => handleAssignService(user._id,problem._id)}>
+  <TouchableOpacity style={{marginLeft: 70}} onPress={() => handleAssignService(user._id,problem._id)}>
   <Icon name="plus" size={24} />
   </TouchableOpacity> 
 : null }
@@ -187,14 +187,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#8a2be2',
     marginBottom: 25,
-    paddingTop: 20
+    paddingTop: 20,
+    
   },
   titleInfo: {
     paddingHorizontal: 20,
     paddingBottom: 20,
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#8a2be2'
+    color: '#8a2be2',
+    textAlign:'center',
   },
   status: {
     flexDirection: 'row',

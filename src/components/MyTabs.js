@@ -5,6 +5,7 @@ import ServiceProviderMain from './ServiceProviderMain';
 import ServiceProviderData from './ServiceProviderData';
 import ServiceProviderCharts from './ServiceProviderCharts';
 import ServiceProviderMap from './ServiceProviderMap';
+import ServiceProviderAdd from './ServiceProviderAdd';
 import { Feather } from '@expo/vector-icons'
 
 
@@ -20,7 +21,7 @@ const MyTabs = () => {
 
             if (route.name === 'Problemas') {
               iconName = "list";
-            } else if (route.name === 'Atuais') {
+            } else if (route.name === 'Meus') {
               iconName = "check";
             }
             else if (route.name === 'Mapa') {
@@ -28,6 +29,9 @@ const MyTabs = () => {
             }
             else if (route.name === 'Gráficos') {
               iconName = "bar-chart-2";
+            }
+            else if (route.name === 'Perfil') {
+              iconName = "user";
             }
 
             // You can return any component that you like here!
@@ -43,8 +47,9 @@ const MyTabs = () => {
       >
         <Tab.Screen name="Mapa" component={ServiceProviderMap} />
         <Tab.Screen name="Problemas" component={ServiceProviderMain} />
-        <Tab.Screen name="Atuais" component={ServiceProviderData} />
+        <Tab.Screen name="Meus" component={ServiceProviderData} />
         <Tab.Screen name="Gráficos" component={ServiceProviderCharts} />
+        <Tab.Screen name="Perfil" component={ServiceProviderAdd} />
       </Tab.Navigator>
     </NavigationContainer>
   );
