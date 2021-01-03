@@ -11,7 +11,7 @@ return (
   </TouchableOpacity>
   <Image
     style={{ height: 500 , width: '100%'}}
-    source={{uri: `https://dc4a7874d0f7.ngrok.io/files/${props.uri}` }}
+    source={{uri: `https://9720c12ec8d7.ngrok.io/files/${props.uri}` }}
     resizeMode="contain"
   />
 </View>

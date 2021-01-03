@@ -101,9 +101,7 @@ const ServiceProviderCharts = (props) => {
   <LineChart
     data={{
       labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-      datasets: [{
-        data: problems        
-        }]
+      datasets: [{data: problems}]
     }}
     width={750} // from react-native
     height={220}

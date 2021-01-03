@@ -14,25 +14,30 @@ import { Appbar,RadioButton } from 'react-native-paper';
 import api from '../../services/api';
 
 
-
-
-
-
 const formCadastro = props => {
   const [checked, setChecked] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   async function cadastrar(nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
-    rg, email1,confEmail, senha1, prestador, senhaPrestador ) {
+    rg, email1,confEmail, senha1, prestador, senhaPrestador, confirmPassword ) {
       var email = email1;
       var senha = senha1;
 
+      if(senha1 !== confirmPassword) {
+        Alert.alert("Erro", "Senhas diferentes");
+      }
+
       if (checked && senhaPrestador === "teste" && email === confEmail){
+        if(!area) {
+          Alert.alert("Erro","Selecione sua Área");
+        }
         await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
           rg, email, senha, prestador});
         Alert.alert("Sucesso","Cadastro realizado com sucesso!");
         Actions.formLogin();
       }
       else if(email === confEmail && checked === false){
+          prestador = '';
           await api.post('/users', {nome, dataNascimento, endereco, numero, cidade, cep, uf, telefone, celular,
             rg, email, senha, prestador});
             Alert.alert("Sucesso","Cadastro realizado com sucesso!");
@@ -219,6 +224,17 @@ const formCadastro = props => {
                 onChangeText={texto => props.modificaSenha(texto)}
               />
             </View>
+
+            <View style={styles.SectionStyle}>
+              <TextInput
+                style={{ marginLeft: 10, fontSize: 20, width: 345 }}
+                placeholder="Confirmar senha"
+                secureTextEntry={true}
+                placeholderTextColor='black'
+                value={confirmPassword}
+                onChangeText={text => setConfirmPassword(text)}
+              />
+            </View>
       <View style={{}}>     
         <View style={{flexDirection: 'row', alignItems:'center'}}>
       <RadioButton
@@ -246,9 +262,11 @@ const formCadastro = props => {
             style={{flex: 1 , height:50 }}
             selectedValue={props.prestador}
             onValueChange={texto => props.modificaPrestador(texto)}
+            mode={"dialog"}
         >
-          {AreaData.map(item => {
-              return (<Picker.Item label={item} value={item} />)
+         <Picker.Item key='-1' label={'Selecione uma opção'} value={''}/>
+          {AreaData.map((item,index) => {
+            return   (<Picker.Item key={index} label={item} value={item} />)
             })} 
         </Picker>
 
@@ -273,7 +291,7 @@ const formCadastro = props => {
             <TouchableOpacity
               onPress={() => cadastrar(props.nome, props.dataNasc, props.endereco, props.numero, props.cidade,
                                         props.CEP, props.UF, props.telefone, props.celular, props.RG, props.email1,
-                                        props.confEmail, props.senha1,props.prestador, props.senhaPrestador)}
+                                        props.confEmail, props.senha1,props.prestador, props.senhaPrestador, confirmPassword)}
               style={styles.SectionStyle}
             >
               <Text style={styles.text2}> Registrar </Text>

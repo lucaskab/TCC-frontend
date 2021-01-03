@@ -84,7 +84,8 @@ const ServiceProviderMain = (props) => {
         kmBusca: 10 * 1000
       }
     }).then(response => {
-      setProblems(response.data);
+      const problemsNotSolved = response.data.filter((problem) => problem.status != 'Finalizado' && problem.idPrestador === 'Em análise' );
+      setProblems(problemsNotSolved);
       
     })
   },[position]);
@@ -106,7 +107,7 @@ const ServiceProviderMain = (props) => {
       <View style={styles.title}>
   <Text style={styles.titleText} >Bem-vindo {user.nome} </Text>
       </View>
-      <Text style={styles.titleInfo}>Todos problemas não al de {user.prestador} </Text>
+      <Text style={styles.titleInfo}>Todos problemas não alocados de {user.prestador} </Text>
     </View>
     <ScrollView>
       {problems.map(problem => (

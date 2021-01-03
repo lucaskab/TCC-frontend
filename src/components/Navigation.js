@@ -86,6 +86,29 @@ function HomeScreen({ navigation }, props) {
     
     }
   }
+
+  function LoadIcons({icone}) {
+
+    if(icone === "Acessibilidade") return <Image style={styles.icon} source={require('../assets/icons/acessibilidade.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Assistência Social") return <Image style={styles.icon} source={require('../assets/icons/assistencia-social.png')} />
+    else if(icone === "Comércio e Serviço") return <Image style={styles.icon} source={require('../assets/icons/comercio-eletronico.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Cultura, Lazer e Turismo") return <Image style={styles.icon} source={require('../assets/icons/teatro.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Educação") return <Image style={styles.icon} source={require('../assets/icons/educacao.png')} />
+    else if(icone === "Limpeza Urbana") return <Image style={styles.icon} source={require('../assets/icons/lixo.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Animais") return <Image style={styles.icon} source={require('../assets/icons/casa-de-animais.png')} />
+    else if(icone === "Meio Ambiente") return <Image style={styles.icon} source={require('../assets/icons/de-meio-ambiente.png')} />
+    else if(icone === "Transporte") return <Image style={styles.icon} source={require('../assets/icons/onibus.png')} />
+    else if(icone === "Trânsito") return <Image style={styles.icon} source={require('../assets/icons/luzes-de-transito.png')} />
+    else if(icone === "Saúde e Vigilancia Sanitária") return <Image style={styles.icon} source={require('../assets/icons/first-aid-kit.png')} />
+    else if(icone === "Serviços Funerários") return <Image style={styles.icon} source={require('../assets/icons/gravestone.png')} />
+    return null;
+  }
   
 
   function list(){
@@ -151,7 +174,7 @@ function HomeScreen({ navigation }, props) {
       ))}
       {Problems.map(problem => (
         <MapView.Marker key={problem._id} coordinate={{ latitude: problem.posicao.coordinates[1] , longitude: problem.posicao.coordinates[0], title:"title", description:"description" }} >
-        {/*<LoadIcons icone={problem.areaProblema} />*/}
+        {<LoadIcons icone={problem.areaProblema} />}
         <Callout onPress={() => Actions.problemInfo({problemId: problem._id , flag: 0} )}>
             <View  style={ styles.callout }>   
               <Text style={styles.user}>Area: {problem.areaProblema} </Text>
@@ -340,4 +363,8 @@ const styles = StyleSheet.create({
     bottom: 20,
     zIndex: 5,
   },
+  icon: {
+    width: 30,
+    height: 30,
+  }
 });

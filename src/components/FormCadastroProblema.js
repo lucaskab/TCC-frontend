@@ -8,9 +8,6 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Button } from 'react-native-elements';
 import { connect } from 'react-redux';
-import FitImage from 'react-native-fit-image';
-
-import Lightbox from 'react-native-lightbox';
 
 export const FormCadastroProblema = (props) => {
   const [Imagem, setImagem] = useState([], []);

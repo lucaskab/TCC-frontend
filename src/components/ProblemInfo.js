@@ -174,7 +174,7 @@ const changeProblemStatus = useCallback(async(status) => {
          <ScrollView style={{backgroundColor: "#DCDCDC",flexDirection: 'row', marginTop: 30, marginBottom: 80, borderRadius: 8,borderColor:'#8a2be2',borderWidth: 5, paddingleft: 15, paddingRight: 15}} horizontal={true} showsHorizontalScrollIndicator={false} >
           {photoName.map(uri => (
             <TouchableOpacity onPress={()=> Actions.fullPicture({uri})}>
-              <Image resizeMode="contain" style={{width: 100, height: 100, marginRight: 10}} source={{uri: `https://dc4a7874d0f7.ngrok.io/files/${uri}`}}></Image> 
+              <Image resizeMode="contain" style={{width: 100, height: 100, marginRight: 10}} source={{uri: `https://9720c12ec8d7.ngrok.io/files/${uri}`}}></Image> 
             </TouchableOpacity>
           ))} 
           </ScrollView> 

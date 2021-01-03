@@ -59,8 +59,8 @@ const ServiceProviderData = (props) => {
         idPrestador: user._id,
       }
     }).then(response => {
-      //const problemsNotSolved = response.data.filter((problem) => problem.status != 'Finalizado' );
-      setProblems(response.data);
+      const problemsNotSolved = response.data.filter((problem) => problem.status != 'Finalizado' );
+      setProblems(problemsNotSolved);
     })
 
   },[data]);
@@ -83,7 +83,7 @@ const ServiceProviderData = (props) => {
       <Appbar.Action icon="arrow-left" onPress={()=> Actions.tab()} />
     </Appbar.Header>
     <View>
-      <Text style={styles.titleInfo}>Você possui {qtd} problema(s) </Text>
+      <Text style={styles.titleInfo}>Você possui {qtd} problema(s) até o momento! </Text>
     </View>
     {problems ? 
       <FlatList 
@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#8a2be2'
+    color: '#8a2be2',
+    textAlign:'center'
   },
   status: {
     flexDirection: 'row',

@@ -53,20 +53,6 @@ const ServiceProviderMap = () => {
   }
    
   }
-
-  function LoadIcons(props){
-    const icone = props.icone;
-    if(icone === "Trânsito"){
-      return (<MaterialIcons name="directions-car" size={30} color="black" />)
-    }
-    else if(icone === "Saúde e Vigilancia Sanitária"){
-      return (<MaterialIcons name="local-hospital" size={30} color="red" />)
-    }
-    else if(icone === "Meio Ambiente") {
-      return (<EvilIcons name="trash" size={40} color="grey"/>)
-    }
-    else return(null)
-  }
   
 
   async function loadProblems() {
@@ -142,7 +128,6 @@ const ServiceProviderMap = () => {
       ))}
       {Problems.map(problem => (
         <MapView.Marker key={problem._id} coordinate={{ latitude: problem.posicao.coordinates[1] , longitude: problem.posicao.coordinates[0], title:"title", description:"description" }} >
-        <LoadIcons icone={problem.areaProblema} />
         <Callout onPress={() => Actions.problemInfo({problemId: problem._id , flag: 0} )}>
             <View  style={ styles.callout }>   
               <Text style={styles.user}>Area: {problem.areaProblema} </Text>
