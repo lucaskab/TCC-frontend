@@ -40,6 +40,7 @@ const IndicatorStyles = {
     const [busca,setBusca] = useState('');
     const [checked, setChecked] = useState('first');
     const [activityI, setActivityI] = useState(false);
+
     
     async function LoadAddress(){
 
@@ -79,8 +80,7 @@ const IndicatorStyles = {
       setActivityI(true);
       var arrayDeURL  = [props.Foto1, props.Foto2, props.Foto3, props.Foto4, props.Foto5];
       const address = await reverseGeocodeAsync({latitude, longitude});
-      console.log(address);
-
+      
       const urlFoto =  [];
       for(var i = 0; i <5; i++){
       var index = arrayDeURL[i].lastIndexOf("/") + 1;
@@ -102,7 +102,7 @@ const IndicatorStyles = {
       urlFoto[i] = filename;
     }
       
-      await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema, latitude, longitude, sugestao, uf: address[0].isoCountryCode, city: address[0].subregion})
+      await api.post('/problems', {email,nomeProblema, Descricao, urlFoto, areaProblema, latitude, longitude, sugestao, uf: address[0].region, city: address[0].subregion})
       setActivityI(false);
       Alert.alert("Problema","Seu problema foi reportado com sucesso!!");
       props.modificaDescricao("");
